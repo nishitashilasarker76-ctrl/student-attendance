@@ -1,0 +1,4 @@
+# Wokwi Libraries — auto-install when project loads
+Adafruit SSD1306
+Adafruit GFX Library
+ArduinoJson

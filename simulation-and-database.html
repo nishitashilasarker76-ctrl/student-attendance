@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulation Workflow + Database Connectivity</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#050510;color:#ddd;line-height:1.7;max-width:1100px;margin:0 auto;padding:0 16px 40px}
+h1{text-align:center;padding:35px 10px;color:#00d4ff;font-size:1.8em;border-bottom:3px solid #00d4ff}
+h2{color:#00d4ff;margin:28px 0 12px;padding-bottom:6px;border-bottom:2px solid #1a2a4c;font-size:1.25em}
+.bx{background:#0c0c1c;border:1px solid #1a1a35;border-radius:14px;padding:22px;margin:12px 0;overflow-x:auto}
+.bx h3{color:#ff9f43;text-align:center;margin-bottom:12px}
+svg text{font-family:'Segoe UI',sans-serif}
+.cmd{background:#0a0a18;border:1px solid #1a1a30;border-radius:8px;padding:12px 16px;margin:8px 0;font-family:'Courier New',monospace;font-size:.85em;color:#6bcb77;overflow-x:auto;white-space:pre}
+.note{background:rgba(255,217,61,.06);border-left:4px solid #ffd93d;padding:10px 14px;border-radius:0 8px 8px 0;margin:8px 0;color:#ffe080;font-size:.9em}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.88em}
+th,td{padding:8px 10px;border-bottom:1px solid #1a1a30;text-align:left}
+th{background:#111130;color:#00d4ff}
+</style>
+</head>
+<body>
+
+<h1>🖥️ Simulation Workflow + 🔥 Database Connectivity</h1>
+
+<!-- ============ PART 1: SIMULATION WORKFLOW ============ -->
+<h2>1. 🖥️ Wokwi Simulation — Complete Workflow</h2>
+
+<div class="bx">
+<h3>Simulation এ ঠিক কি হয় — Step by Step (Serial Monitor Output সহ)</h3>
+<svg width="100%" viewBox="0 0 950 900">
+<text x="475" y="25" text-anchor="middle" fill="#ffd93d" font-size="16" font-weight="bold">Wokwi Simulation → আপনি যা দেখবেন এবং করবেন</text>
+
+<!-- Step 1: System Start -->
+<rect x="280" y="45" width="390" height="50" rx="10" fill="#081828" stroke="#00d4ff" stroke-width="2"/>
+<text x="475" y="68" text-anchor="middle" fill="#00d4ff" font-size="13" font-weight="bold">▶️ আপনি Wokwi তে Play button চাপলেন</text>
+<text x="475" y="85" text-anchor="middle" fill="#888" font-size="10">OLED দেখায়: "ATTENDANCE SYSTEM — Initializing..."</text>
+<line x1="475" y1="95" x2="475" y2="115" stroke="#00d4ff" stroke-width="2"/>
+<polygon points="470,110 475,120 480,110" fill="#00d4ff"/>
+
+<!-- Step 2: WiFi Connect -->
+<rect x="280" y="120" width="390" height="50" rx="10" fill="#081828" stroke="#6bcb77" stroke-width="2"/>
+<text x="475" y="143" text-anchor="middle" fill="#6bcb77" font-size="13" font-weight="bold">📶 WiFi Connect → "Wokwi-GUEST"</text>
+<text x="475" y="160" text-anchor="middle" fill="#888" font-size="10">Serial Monitor: "✅ WiFi Connected! IP: 10.10.0.2"</text>
+<line x1="475" y1="170" x2="475" y2="190" stroke="#6bcb77" stroke-width="2"/>
+<polygon points="470,185 475,195 480,185" fill="#6bcb77"/>
+
+<!-- Step 3: Ready -->
+<rect x="280" y="195" width="390" height="55" rx="10" fill="#0a1a0a" stroke="#00ff88" stroke-width="2"/>
+<text x="475" y="218" text-anchor="middle" fill="#00ff88" font-size="14" font-weight="bold">✅ System Ready — Waiting for motion...</text>
+<text x="475" y="238" text-anchor="middle" fill="#888" font-size="10">OLED দেখায়: "Status: Waiting... | WiFi: Connected | Today: 0 marked"</text>
+<line x1="475" y1="250" x2="475" y2="275" stroke="#00ff88" stroke-width="2"/>
+<polygon points="470,270 475,280 480,270" fill="#00ff88"/>
+
+<!-- YOUR ACTION -->
+<rect x="30" y="285" width="250" height="45" rx="10" fill="#1a0a0a" stroke="#ff6b6b" stroke-width="2"/>
+<text x="155" y="312" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="bold">👆 আপনি PIR sensor CLICK করুন</text>
+<line x1="280" y1="307" x2="310" y2="307" stroke="#ff6b6b" stroke-width="2"/>
+
+<!-- Step 4: PIR -->
+<rect x="310" y="285" width="360" height="45" rx="10" fill="#0f1020" stroke="#ff6b6b" stroke-width="2"/>
+<text x="490" y="303" text-anchor="middle" fill="#ff6b6b" font-size="13" font-weight="bold">🔴 STEP 1: PIR → "Motion Detected!"</text>
+<text x="490" y="320" text-anchor="middle" fill="#888" font-size="10">Serial: "📡 PIR → Motion Detected! | 📏 Distance: 42 cm"</text>
+<line x1="475" y1="330" x2="475" y2="350" stroke="#ff6b6b" stroke-width="2"/>
+<polygon points="470,345 475,355 480,345" fill="#ff6b6b"/>
+
+<!-- Step 5: Scan Prompt -->
+<rect x="310" y="355" width="360" height="45" rx="10" fill="#0f1020" stroke="#ffd93d" stroke-width="2"/>
+<text x="490" y="373" text-anchor="middle" fill="#ffd93d" font-size="13" font-weight="bold">🖥️ STEP 2: OLED → "PLACE FINGER"</text>
+<text x="490" y="390" text-anchor="middle" fill="#888" font-size="10">বড় text দিয়ে "PLACE FINGER on sensor now..."</text>
+<line x1="475" y1="400" x2="475" y2="425" stroke="#ffd93d" stroke-width="2"/>
+<polygon points="470,420 475,430 480,420" fill="#ffd93d"/>
+
+<!-- YOUR ACTION 2 -->
+<rect x="30" y="435" width="250" height="45" rx="10" fill="#0a1a0a" stroke="#00ff88" stroke-width="2"/>
+<text x="155" y="455" text-anchor="middle" fill="#00ff88" font-size="11" font-weight="bold">👆 Green button CLICK করুন</text>
+<text x="155" y="470" text-anchor="middle" fill="#aaa" font-size="9">(= Rahim এর fingerprint scan)</text>
+<line x1="280" y1="457" x2="310" y2="457" stroke="#00ff88" stroke-width="2"/>
+
+<!-- Step 6: Match -->
+<rect x="310" y="435" width="360" height="50" rx="10" fill="#0a1a0a" stroke="#a855f7" stroke-width="2"/>
+<text x="490" y="453" text-anchor="middle" fill="#a855f7" font-size="13" font-weight="bold">👆 STEP 3: Fingerprint → MATCH!</text>
+<text x="490" y="470" text-anchor="middle" fill="#888" font-size="10">Serial: "ID=#1, Confidence: 285/300 → Rahim Ahmed (STU-001)"</text>
+<text x="490" y="482" text-anchor="middle" fill="#6bcb77" font-size="9">LED GREEN ON! | Buzzer BEEP! 🔊</text>
+<line x1="475" y1="485" x2="475" y2="510" stroke="#a855f7" stroke-width="2"/>
+<polygon points="470,505 475,515 480,505" fill="#a855f7"/>
+
+<!-- Step 7: OLED Welcome -->
+<rect x="310" y="515" width="360" height="50" rx="10" fill="#0f1020" stroke="#00ff88" stroke-width="2"/>
+<text x="490" y="533" text-anchor="middle" fill="#00ff88" font-size="13" font-weight="bold">🖥️ STEP 4: OLED → "Welcome Rahim!"</text>
+<text x="490" y="550" text-anchor="middle" fill="#888" font-size="10">"ID: STU-001 | Dept: CSE | Attendance #1"</text>
+<line x1="475" y1="565" x2="475" y2="590" stroke="#00ff88" stroke-width="2"/>
+<polygon points="470,585 475,595 480,585" fill="#00ff88"/>
+
+<!-- Step 8: Firebase -->
+<rect x="250" y="595" width="450" height="85" rx="12" fill="#1a0f02" stroke="#ffd93d" stroke-width="3"/>
+<text x="475" y="618" text-anchor="middle" fill="#ffd93d" font-size="14" font-weight="bold">🔥 STEP 5: WiFi → Firebase Database!</text>
+<text x="475" y="638" text-anchor="middle" fill="#fff" font-size="11">Serial: "📡 Sending to: https://your-project.firebaseio.com/attendance/STU-001.json"</text>
+<text x="475" y="655" text-anchor="middle" fill="#00ff88" font-size="11">Serial: "✅ Firebase: Data saved successfully! Response: 200"</text>
+<text x="475" y="672" text-anchor="middle" fill="#888" font-size="9">JSON: {"name":"Rahim","student_id":"STU-001","status":"present","confidence":285}</text>
+
+<!-- Firebase visual -->
+<line x1="700" y1="637" x2="780" y2="637" stroke="#ffd93d" stroke-width="2"/>
+<polygon points="775,631 785,637 775,643" fill="#ffd93d"/>
+
+<rect x="785" y="600" width="155" height="80" rx="10" fill="#1a0f02" stroke="#ff9f43" stroke-width="2"/>
+<text x="862" y="625" text-anchor="middle" fill="#ff9f43" font-size="12" font-weight="bold">🔥 Firebase DB</text>
+<text x="862" y="645" text-anchor="middle" fill="#aaa" font-size="9">attendance/</text>
+<text x="862" y="658" text-anchor="middle" fill="#aaa" font-size="9">  STU-001: {data}</text>
+<text x="862" y="671" text-anchor="middle" fill="#aaa" font-size="9">  STU-002: {data}</text>
+
+<!-- Step 9: Back to ready -->
+<line x1="475" y1="680" x2="475" y2="705" stroke="#ffd93d" stroke-width="2"/>
+<polygon points="470,700 475,710 480,700" fill="#ffd93d"/>
+
+<rect x="310" y="710" width="360" height="40" rx="10" fill="#0a1a0a" stroke="#00ff88" stroke-width="2"/>
+<text x="490" y="735" text-anchor="middle" fill="#00ff88" font-size="13" font-weight="bold">✅ STEP 6: Back to "Ready" → পরবর্তী student...</text>
+
+<!-- Unknown test -->
+<line x1="475" y1="750" x2="475" y2="775" stroke="#888" stroke-width="1.5" stroke-dasharray="4,3"/>
+<rect x="30" y="775" width="250" height="45" rx="10" fill="#1a0a0a" stroke="#ff6b6b" stroke-width="2"/>
+<text x="155" y="795" text-anchor="middle" fill="#ff6b6b" font-size="11" font-weight="bold">👆 Red button CLICK করুন</text>
+<text x="155" y="810" text-anchor="middle" fill="#aaa" font-size="9">(= Unknown person test)</text>
+<line x1="280" y1="797" x2="310" y2="797" stroke="#ff6b6b" stroke-width="2"/>
+
+<rect x="310" y="775" width="360" height="50" rx="10" fill="#1a0808" stroke="#ff6b6b" stroke-width="2"/>
+<text x="490" y="795" text-anchor="middle" fill="#ff6b6b" font-size="13" font-weight="bold">❌ REJECTED — "ACCESS DENIED!"</text>
+<text x="490" y="812" text-anchor="middle" fill="#888" font-size="10">LED RED | Buzzer: low tone | 🚨 Alert → Firebase</text>
+
+<!-- TOTAL TIME -->
+<rect x="250" y="845" width="450" height="40" rx="10" fill="rgba(0,255,136,.06)" stroke="#00ff88" stroke-width="1.5"/>
+<text x="475" y="870" text-anchor="middle" fill="#00ff88" font-size="13" font-weight="bold">⏱️ পুরো flow: PIR click → Firebase save = ~3 seconds!</text>
+</svg>
+</div>
+
+<!-- ============ PART 2: DATABASE ============ -->
+<h2>2. 🔥 Firebase Database — কিভাবে Connect হয়?</h2>
+
+<div class="bx">
+<h3>ESP32 → WiFi → Internet → Firebase — Data Flow</h3>
+<svg width="100%" viewBox="0 0 950 280">
+<!-- ESP32 -->
+<rect x="20" y="60" width="160" height="160" rx="14" fill="#081828" stroke="#00d4ff" stroke-width="2"/>
+<text x="100" y="90" text-anchor="middle" fill="#00d4ff" font-size="14" font-weight="bold">🧠 ESP32</text>
+<text x="100" y="115" text-anchor="middle" fill="#aaa" font-size="10">JSON তৈরি করে:</text>
+<text x="100" y="135" text-anchor="middle" fill="#6bcb77" font-size="9">{name: "Rahim",</text>
+<text x="100" y="148" text-anchor="middle" fill="#6bcb77" font-size="9"> id: "STU-001",</text>
+<text x="100" y="161" text-anchor="middle" fill="#6bcb77" font-size="9"> status: "present",</text>
+<text x="100" y="174" text-anchor="middle" fill="#6bcb77" font-size="9"> confidence: 285}</text>
+<text x="100" y="210" text-anchor="middle" fill="#888" font-size="9">HTTPClient library</text>
+
+<!-- Arrow 1 -->
+<line x1="180" y1="140" x2="240" y2="140" stroke="#ffd93d" stroke-width="3"/>
+<polygon points="235,134 245,140 235,146" fill="#ffd93d"/>
+<text x="210" y="130" text-anchor="middle" fill="#ffd93d" font-size="9">WiFi</text>
+
+<!-- Router -->
+<rect x="245" y="95" width="120" height="90" rx="10" fill="#0f1020" stroke="#ffd93d" stroke-width="2"/>
+<text x="305" y="125" text-anchor="middle" fill="#ffd93d" font-size="12" font-weight="bold">📶 WiFi</text>
+<text x="305" y="145" text-anchor="middle" fill="#fff" font-size="10">"Wokwi-GUEST"</text>
+<text x="305" y="165" text-anchor="middle" fill="#888" font-size="9">or your home WiFi</text>
+
+<!-- Arrow 2 -->
+<line x1="365" y1="140" x2="425" y2="140" stroke="#38bdf8" stroke-width="3"/>
+<polygon points="420,134 430,140 420,146" fill="#38bdf8"/>
+<text x="395" y="130" text-anchor="middle" fill="#38bdf8" font-size="9">HTTPS</text>
+
+<!-- Internet -->
+<rect x="430" y="100" width="100" height="80" rx="10" fill="#0f1020" stroke="#38bdf8" stroke-width="2"/>
+<text x="480" y="130" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">🌐 Internet</text>
+<text x="480" y="150" text-anchor="middle" fill="#888" font-size="10">HTTP PUT</text>
+<text x="480" y="168" text-anchor="middle" fill="#888" font-size="9">request</text>
+
+<!-- Arrow 3 -->
+<line x1="530" y1="140" x2="590" y2="140" stroke="#ff9f43" stroke-width="3"/>
+<polygon points="585,134 595,140 585,146" fill="#ff9f43"/>
+<text x="560" y="130" text-anchor="middle" fill="#ff9f43" font-size="9">REST API</text>
+
+<!-- Firebase -->
+<rect x="595" y="50" width="180" height="190" rx="14" fill="#1a0f02" stroke="#ff9f43" stroke-width="3"/>
+<text x="685" y="80" text-anchor="middle" fill="#ff9f43" font-size="15" font-weight="bold">🔥 Firebase</text>
+<text x="685" y="100" text-anchor="middle" fill="#fff" font-size="10">Realtime Database</text>
+<line x1="615" y1="108" x2="755" y2="108" stroke="#2a2010" stroke-width="1"/>
+<text x="615" y="128" fill="#ffd93d" font-size="9">attendance/</text>
+<text x="625" y="144" fill="#aaa" font-size="9">STU-001/</text>
+<text x="635" y="158" fill="#6bcb77" font-size="8">name: "Rahim"</text>
+<text x="635" y="170" fill="#6bcb77" font-size="8">status: "present"</text>
+<text x="635" y="182" fill="#6bcb77" font-size="8">time: "08:45"</text>
+<text x="625" y="198" fill="#aaa" font-size="9">STU-002/</text>
+<text x="625" y="214" fill="#aaa" font-size="9">STU-003/</text>
+<text x="615" y="232" fill="#ff6b6b" font-size="9">alerts/</text>
+
+<!-- Arrow 4: Firebase to Dashboard -->
+<line x1="775" y1="100" x2="825" y2="70" stroke="#00ff88" stroke-width="2"/>
+<rect x="825" y="45" width="120" height="45" rx="8" fill="#0a1a0a" stroke="#00ff88" stroke-width="1.5"/>
+<text x="885" y="65" text-anchor="middle" fill="#00ff88" font-size="11" font-weight="bold">🖥️ Dashboard</text>
+<text x="885" y="80" text-anchor="middle" fill="#888" font-size="9">Admin দেখে</text>
+
+<line x1="775" y1="180" x2="825" y2="200" stroke="#a855f7" stroke-width="2"/>
+<rect x="825" y="180" width="120" height="45" rx="8" fill="#0a0a1a" stroke="#a855f7" stroke-width="1.5"/>
+<text x="885" y="200" text-anchor="middle" fill="#a855f7" font-size="11" font-weight="bold">📱 Mobile App</text>
+<text x="885" y="215" text-anchor="middle" fill="#888" font-size="9">Student দেখে</text>
+
+<!-- Bottom label -->
+<text x="475" y="270" text-anchor="middle" fill="#888" font-size="11">ESP32 → WiFi → Internet → Firebase REST API (HTTP PUT) → Data stored → Dashboard/App read করে</text>
+</svg>
+</div>
+
+<!-- ============ PART 3: THE CODE ============ -->
+<h2>3. 📝 Key Code — Database Connectivity (Arduino)</h2>
+
+<div class="bx">
+<h3>ESP32 থেকে Firebase এ data পাঠানোর code — এটাই মূল connectivity!</h3>
+<div class="cmd" style="color:#e0e0e0">
+<span style="color:#569cd6">// ━━━ Step 1: JSON data তৈরি ━━━</span>
+StaticJsonDocument<512> doc;
+doc["student_id"]  = "STU-001";
+doc["name"]        = "Rahim Ahmed";
+doc["department"]  = "CSE";
+doc["status"]      = "present";
+doc["confidence"]  = 285;
+doc["date"]        = "2026-06-08";
+doc["time"]        = "08:45:23";
+doc["distance_cm"] = 42.5;
+doc["pir_motion"]  = true;
+
+String jsonPayload;
+serializeJson(doc, jsonPayload);
+
+<span style="color:#569cd6">// ━━━ Step 2: Firebase URL তৈরি ━━━</span>
+String url = "https://<span style="color:#ffd93d">YOUR-PROJECT</span>.firebaseio.com/attendance/STU-001.json";
+
+<span style="color:#569cd6">// ━━━ Step 3: HTTP PUT request পাঠানো ━━━</span>
+HTTPClient http;
+http.begin(url);
+http.addHeader("Content-Type", "application/json");
+int httpCode = http.PUT(jsonPayload);  <span style="color:#569cd6">// ← এই line এ data Firebase এ যায়!</span>
+
+<span style="color:#569cd6">// ━━━ Step 4: Response check ━━━</span>
+if (httpCode == 200) {
+  Serial.println("✅ Data saved to Firebase!");
+}
+http.end();
+</div>
+
+<div class="note">
+💡 <strong>এটাই পুরো database connectivity!</strong> মাত্র ১৫ লাইন code!<br>
+• <code>StaticJsonDocument</code> → data কে JSON format এ convert করে<br>
+• <code>HTTPClient</code> → WiFi দিয়ে internet এ request পাঠায়<br>
+• <code>http.PUT()</code> → Firebase Realtime Database এ data save হয়<br>
+• Firebase URL এ <code>/attendance/STU-001.json</code> → এই path এ data বসে
+</div>
+</div>
+
+<!-- ============ PART 4: FIREBASE SETUP ============ -->
+<h2>4. 🔥 Firebase Setup — ঠিক কিভাবে করবেন (১০ মিনিট)</h2>
+
+<div class="bx">
+<h3>Step-by-Step Firebase Project Create</h3>
+<table>
+<tr><th>Step</th><th>কি করবেন</th><th>কোথায়</th></tr>
+<tr><td>1</td><td><a href="https://console.firebase.google.com" style="color:#ff9f43">console.firebase.google.com</a> → "Add project"</td><td>Browser</td></tr>
+<tr><td>2</td><td>Name: <code>attendance-system</code> → Create</td><td>Firebase Console</td></tr>
+<tr><td>3</td><td>Left sidebar → Build → <strong>Realtime Database</strong></td><td>Firebase Console</td></tr>
+<tr><td>4</td><td>"Create Database" → <strong>Test mode</strong> → Enable</td><td>Firebase Console</td></tr>
+<tr><td>5</td><td>URL copy করুন: <code>https://attendance-system-xxxxx.firebaseio.com</code></td><td>Firebase Console</td></tr>
+<tr><td>6</td><td>Wokwi code এ <code>FIREBASE_HOST</code> replace করুন এই URL দিয়ে</td><td>Wokwi Editor</td></tr>
+<tr><td>7</td><td>Wokwi Play → Button press → Firebase Console refresh → <strong>Data দেখবেন! ✅</strong></td><td>Both</td></tr>
+</table>
+</div>
+
+<!-- ============ PART 5: FILES ============ -->
+<h2>5. 📁 Simulation Files — Ready to Use!</h2>
+
+<div class="bx">
+<table>
+<tr><th>File</th><th>কি আছে</th><th>কোথায় ব্যবহার করবেন</th></tr>
+<tr><td><code>wokwi_simulation/sketch.ino</code></td><td>Complete Arduino code — all sensors + Firebase</td><td>Wokwi → sketch.ino তে paste</td></tr>
+<tr><td><code>wokwi_simulation/diagram.json</code></td><td>Circuit wiring — auto-connects all components</td><td>Wokwi → diagram.json তে paste</td></tr>
+<tr><td><code>wokwi_simulation/libraries.txt</code></td><td>Required libraries list</td><td>Wokwi → libraries.txt তে paste</td></tr>
+<tr><td><code>wokwi_simulation/FIREBASE_SETUP.md</code></td><td>Firebase setup guide (step-by-step)</td><td>Follow the instructions</td></tr>
+</table>
+
+<div class="note">
+💡 <strong>Wokwi তে এই ৩টা file paste করলেই পুরো simulation ready!</strong><br>
+sketch.ino → code tab এ paste<br>
+diagram.json → diagram tab এ paste (or manually build circuit)<br>
+libraries.txt → libraries tab এ paste
+</div>
+</div>
+
+<div style="text-align:center;padding:25px;margin-top:20px;background:rgba(0,255,136,.05);border:2px solid #00ff88;border-radius:16px">
+<p style="color:#00ff88;font-size:1.15em;font-weight:700">
+🎯 Summary: Simulation + Database = ৩টা file paste + Firebase URL replace = DONE!
+</p>
+</div>
+
+</body>
+</html>

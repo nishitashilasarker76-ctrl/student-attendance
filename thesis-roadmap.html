@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8-Week Thesis Roadmap — Complete Plan</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#060610;color:#ddd;line-height:1.65}
+.hdr{background:linear-gradient(135deg,#0a0a1e,#0f2460);padding:35px 20px;text-align:center;border-bottom:3px solid #00ff88}
+.hdr h1{font-size:1.85em;color:#00ff88}
+.hdr p{color:#999;max-width:650px;margin:8px auto 0}
+.sec{max-width:1100px;margin:25px auto;padding:0 18px}
+.sec h2{font-size:1.3em;color:#00d4ff;margin-bottom:12px;border-bottom:2px solid #1a2a4c;padding-bottom:6px}
+.bx{background:#0c0c1c;border:1px solid #1a1a35;border-radius:16px;padding:22px;margin-bottom:18px;overflow-x:auto}
+
+/* Week cards */
+.week{border:2px solid #1a1a3a;border-radius:16px;margin-bottom:20px;overflow:hidden;transition:border-color .3s}
+.week:hover{border-color:#00d4ff}
+.week-hdr{padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.week-hdr h3{font-size:1.15em}
+.week-hdr .dates{color:#888;font-size:.85em}
+.week-hdr .phase{padding:4px 14px;border-radius:20px;font-size:.78em;font-weight:700}
+.week-body{padding:0 22px 18px}
+.week-body .focus{color:#ffd93d;font-size:.95em;font-weight:700;margin-bottom:10px}
+
+.task-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:768px){.task-grid{grid-template-columns:1fr}}
+.task-card{background:#0a0a1a;border:1px solid #1a1a30;border-radius:10px;padding:14px}
+.task-card h5{margin-bottom:6px;font-size:.95em}
+.task-card ul{list-style:none;padding:0}
+.task-card ul li{padding:3px 0;font-size:.88em;color:#bbb}
+.task-card ul li::before{content:"☐ ";color:#555}
+.task-card .hours{color:#666;font-size:.78em;margin-top:6px}
+
+.deliverable{background:rgba(0,255,136,.04);border:1px solid rgba(0,255,136,.2);border-radius:8px;padding:10px 14px;margin-top:10px}
+.deliverable h5{color:#00ff88;font-size:.9em;margin-bottom:4px}
+.deliverable p{color:#a0dfa0;font-size:.85em}
+
+.progress-bar{height:8px;background:#111130;border-radius:4px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px}
+
+/* Colors per phase */
+.phase-plan{background:rgba(0,212,255,.15);color:#00d4ff}
+.w-plan .week-hdr{background:linear-gradient(90deg,#0a1a30,#0c0c1c)}
+.phase-code{background:rgba(168,85,247,.15);color:#a855f7}
+.w-code .week-hdr{background:linear-gradient(90deg,#12082a,#0c0c1c)}
+.phase-train{background:rgba(255,159,67,.15);color:#ff9f43}
+.w-train .week-hdr{background:linear-gradient(90deg,#1a0f02,#0c0c1c)}
+.phase-sim{background:rgba(56,189,248,.15);color:#38bdf8}
+.w-sim .week-hdr{background:linear-gradient(90deg,#04141e,#0c0c1c)}
+.phase-write{background:rgba(106,203,119,.15);color:#6bcb77}
+.w-write .week-hdr{background:linear-gradient(90deg,#041208,#0c0c1c)}
+.phase-final{background:rgba(255,107,107,.15);color:#ff6b6b}
+.w-final .week-hdr{background:linear-gradient(90deg,#1a0808,#0c0c1c)}
+
+svg text{font-family:'Segoe UI',sans-serif}
+.tip{background:rgba(255,217,61,.06);border-left:4px solid #ffd93d;padding:12px 16px;border-radius:0 8px 8px 0;margin:12px 0;color:#ffe080;font-size:.9em}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>📅 8-Week Thesis Completion Roadmap</h1>
+<p>May 24 → July 18, 2026 — Paper, Coding, Simulation, Data, Model, Results</p>
+</div>
+
+<!-- ===== GANTT CHART ===== -->
+<div class="sec">
+<h2>1. 📊 Gantt Chart — 8 Week Overview</h2>
+<div class="bx">
+<svg width="100%" viewBox="0 0 950 420">
+<text x="475" y="22" text-anchor="middle" fill="#00d4ff" font-size="15" font-weight="bold">8-Week Gantt Chart — কোন সপ্তাহে কি কাজ</text>
+
+<!-- Header -->
+<rect x="0" y="35" width="200" height="30" rx="4" fill="#111130"/>
+<text x="100" y="55" text-anchor="middle" fill="#aaa" font-size="11" font-weight="bold">TASK</text>
+
+<rect x="200" y="35" width="93" height="30" rx="4" fill="#111130"/>
+<text x="247" y="55" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">W1</text>
+<rect x="295" y="35" width="93" height="30" rx="4" fill="#111130"/>
+<text x="342" y="55" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">W2</text>
+<rect x="390" y="35" width="93" height="30" rx="4" fill="#111130"/>
+<text x="437" y="55" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">W3</text>
+<rect x="485" y="35" width="93" height="30" rx="4" fill="#111130"/>
+<text x="532" y="55" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">W4</text>
+<rect x="580" y="35" width="93" height="30" rx="4" fill="#111130"/>
+<text x="627" y="55" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">W5</text>
+<rect x="675" y="35" width="93" height="30" rx="4" fill="#111130"/>
+<text x="722" y="55" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">W6</text>
+<rect x="770" y="35" width="93" height="30" rx="4" fill="#111130"/>
+<text x="817" y="55" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">W7</text>
+<rect x="865" y="35" width="85" height="30" rx="4" fill="#111130"/>
+<text x="907" y="55" text-anchor="middle" fill="#ff6b6b" font-size="10" font-weight="bold">W8</text>
+
+<!-- Date labels -->
+<text x="247" y="78" text-anchor="middle" fill="#555" font-size="8">May 24</text>
+<text x="342" y="78" text-anchor="middle" fill="#555" font-size="8">May 31</text>
+<text x="437" y="78" text-anchor="middle" fill="#555" font-size="8">Jun 7</text>
+<text x="532" y="78" text-anchor="middle" fill="#555" font-size="8">Jun 14</text>
+<text x="627" y="78" text-anchor="middle" fill="#555" font-size="8">Jun 21</text>
+<text x="722" y="78" text-anchor="middle" fill="#555" font-size="8">Jun 28</text>
+<text x="817" y="78" text-anchor="middle" fill="#555" font-size="8">Jul 5</text>
+<text x="907" y="78" text-anchor="middle" fill="#555" font-size="8">Jul 12</text>
+
+<!-- Row 1: Literature + Proposal -->
+<text x="10" y="105" fill="#aaa" font-size="11">📚 Literature Review</text>
+<rect x="200" y="90" width="188" height="22" rx="6" fill="rgba(0,212,255,.25)" stroke="#00d4ff" stroke-width="1"/>
+<text x="294" y="105" text-anchor="middle" fill="#fff" font-size="9">W1-W2</text>
+
+<!-- Row 2: System Design -->
+<text x="10" y="135" fill="#aaa" font-size="11">🏗️ System Architecture</text>
+<rect x="200" y="120" width="188" height="22" rx="6" fill="rgba(0,212,255,.25)" stroke="#00d4ff" stroke-width="1"/>
+<text x="294" y="135" text-anchor="middle" fill="#fff" font-size="9">W1-W2</text>
+
+<!-- Row 3: Data Generation -->
+<text x="10" y="165" fill="#aaa" font-size="11">📊 Data Collection/Gen</text>
+<rect x="295" y="150" width="188" height="22" rx="6" fill="rgba(168,85,247,.25)" stroke="#a855f7" stroke-width="1"/>
+<text x="389" y="165" text-anchor="middle" fill="#fff" font-size="9">W2-W3</text>
+
+<!-- Row 4: ESP32 Coding -->
+<text x="10" y="195" fill="#aaa" font-size="11">💻 ESP32 Firmware</text>
+<rect x="295" y="180" width="283" height="22" rx="6" fill="rgba(168,85,247,.25)" stroke="#a855f7" stroke-width="1"/>
+<text x="437" y="195" text-anchor="middle" fill="#fff" font-size="9">W2-W4</text>
+
+<!-- Row 5: Wokwi Simulation -->
+<text x="10" y="225" fill="#aaa" font-size="11">🖥️ Wokwi Simulation</text>
+<rect x="390" y="210" width="188" height="22" rx="6" fill="rgba(56,189,248,.25)" stroke="#38bdf8" stroke-width="1"/>
+<text x="484" y="225" text-anchor="middle" fill="#fff" font-size="9">W3-W4</text>
+
+<!-- Row 6: ML Model Training -->
+<text x="10" y="255" fill="#aaa" font-size="11">🤖 ML Model Training</text>
+<rect x="390" y="240" width="283" height="22" rx="6" fill="rgba(255,159,67,.25)" stroke="#ff9f43" stroke-width="1"/>
+<text x="532" y="255" text-anchor="middle" fill="#fff" font-size="9">W3-W5</text>
+
+<!-- Row 7: Web Dashboard -->
+<text x="10" y="285" fill="#aaa" font-size="11">🌐 Web Dashboard</text>
+<rect x="485" y="270" width="188" height="22" rx="6" fill="rgba(168,85,247,.25)" stroke="#a855f7" stroke-width="1"/>
+<text x="579" y="285" text-anchor="middle" fill="#fff" font-size="9">W4-W5</text>
+
+<!-- Row 8: Results + Analysis -->
+<text x="10" y="315" fill="#aaa" font-size="11">📊 Results & Analysis</text>
+<rect x="580" y="300" width="188" height="22" rx="6" fill="rgba(106,203,119,.25)" stroke="#6bcb77" stroke-width="1"/>
+<text x="674" y="315" text-anchor="middle" fill="#fff" font-size="9">W5-W6</text>
+
+<!-- Row 9: Paper Writing -->
+<text x="10" y="345" fill="#aaa" font-size="11">📝 Paper Writing</text>
+<rect x="485" y="330" width="378" height="22" rx="6" fill="rgba(106,203,119,.25)" stroke="#6bcb77" stroke-width="1"/>
+<text x="674" y="345" text-anchor="middle" fill="#fff" font-size="9">W4-W7 (parallel!)</text>
+
+<!-- Row 10: Review + Finalize -->
+<text x="10" y="375" fill="#aaa" font-size="11">✅ Review & Submit</text>
+<rect x="770" y="360" width="180" height="22" rx="6" fill="rgba(255,107,107,.25)" stroke="#ff6b6b" stroke-width="1"/>
+<text x="860" y="375" text-anchor="middle" fill="#fff" font-size="9">W7-W8</text>
+
+<!-- Today marker -->
+<line x1="210" y1="85" x2="210" y2="395" stroke="#00ff88" stroke-width="2" stroke-dasharray="4,3"/>
+<text x="210" y="405" text-anchor="middle" fill="#00ff88" font-size="10" font-weight="bold">📍 TODAY</text>
+
+<!-- Legend -->
+<rect x="200" y="395" width="14" height="10" rx="2" fill="rgba(0,212,255,.25)"/><text x="220" y="404" fill="#888" font-size="9">Planning</text>
+<rect x="290" y="395" width="14" height="10" rx="2" fill="rgba(168,85,247,.25)"/><text x="310" y="404" fill="#888" font-size="9">Coding</text>
+<rect x="370" y="395" width="14" height="10" rx="2" fill="rgba(255,159,67,.25)"/><text x="390" y="404" fill="#888" font-size="9">ML/Data</text>
+<rect x="440" y="395" width="14" height="10" rx="2" fill="rgba(56,189,248,.25)"/><text x="460" y="404" fill="#888" font-size="9">Simulation</text>
+<rect x="530" y="395" width="14" height="10" rx="2" fill="rgba(106,203,119,.25)"/><text x="550" y="404" fill="#888" font-size="9">Writing</text>
+<rect x="610" y="395" width="14" height="10" rx="2" fill="rgba(255,107,107,.25)"/><text x="630" y="404" fill="#888" font-size="9">Finalize</text>
+</svg>
+</div>
+</div>
+
+<!-- ===== WEEK BY WEEK ===== -->
+<div class="sec">
+<h2>2. 📋 Week-by-Week Detailed Plan</h2>
+
+<!-- WEEK 1 -->
+<div class="week w-plan">
+<div class="week-hdr">
+<h3 style="color:#00d4ff">📅 Week 1: May 24 — May 30</h3>
+<span class="phase phase-plan">🎯 PLANNING + SETUP</span>
+<span class="dates">৭ দিন</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: Foundation তৈরি — Literature, Design, Environment Setup</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#00d4ff">📚 Paper Writing (Chapter 1-2)</h5>
+<ul>
+<li>Introduction লেখা (500-700 words)</li>
+<li>Literature Review — 5টা reference paper পড়া</li>
+<li>Research Gap identify করা</li>
+<li>Research Questions + Objectives finalize</li>
+<li>Methodology section draft</li>
+</ul>
+<div class="hours">⏱️ ~15 hours | 📄 Output: Chapter 1-2 draft</div>
+</div>
+<div class="task-card">
+<h5 style="color:#a855f7">💻 Environment Setup</h5>
+<ul>
+<li>Arduino IDE install + ESP32 board add</li>
+<li>Python environment setup (pip install)</li>
+<li>Wokwi account create</li>
+<li>Firebase project create (free tier)</li>
+<li>GitHub repo create for code</li>
+<li>System architecture diagram finalize</li>
+</ul>
+<div class="hours">⏱️ ~8 hours | 📄 Output: Ready dev environment</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>✅ Week 1 Deliverables:</h5>
+<p>① Chapter 1 (Intro) draft ② Chapter 2 (Lit Review) draft ③ Dev environment ready ④ System architecture diagram</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:12.5%;background:#00d4ff"></div></div>
+</div>
+</div>
+
+<!-- WEEK 2 -->
+<div class="week w-code">
+<div class="week-hdr">
+<h3 style="color:#a855f7">📅 Week 2: May 31 — Jun 6</h3>
+<span class="phase phase-code">💻 CODING START</span>
+<span class="dates">৭ দিন</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: Data generation + ESP32 firmware শুরু</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#ff9f43">📊 Data Collection & Generation</h5>
+<ul>
+<li>step1_generate_data.py run করা ✅ (already done!)</li>
+<li>Data explore + visualize (charts তৈরি)</li>
+<li>Data augmentation — আরো records add</li>
+<li>Data cleaning + preprocessing script</li>
+<li>Train/Test split prepare</li>
+</ul>
+<div class="hours">⏱️ ~10 hours | 📄 Output: Clean dataset ready</div>
+</div>
+<div class="task-card">
+<h5 style="color:#a855f7">💻 ESP32 Firmware Coding</h5>
+<ul>
+<li>Fingerprint sensor code (R307 library)</li>
+<li>PIR + Ultrasonic sensor integration</li>
+<li>OLED display output code</li>
+<li>LED + Buzzer feedback code</li>
+<li>WiFi connection + HTTP/MQTT setup</li>
+<li>Basic attendance flow code</li>
+</ul>
+<div class="hours">⏱️ ~15 hours | 📄 Output: Working ESP32 code</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>✅ Week 2 Deliverables:</h5>
+<p>① Dataset ready (3000+ records) ② ESP32 firmware v1 ③ All sensors integrated in code</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:25%;background:#a855f7"></div></div>
+</div>
+</div>
+
+<!-- WEEK 3 -->
+<div class="week w-sim">
+<div class="week-hdr">
+<h3 style="color:#38bdf8">📅 Week 3: Jun 7 — Jun 13</h3>
+<span class="phase phase-sim">🖥️ SIMULATION + ML START</span>
+<span class="dates">৭ দিন</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: Wokwi simulation complete + ML model training শুরু</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#38bdf8">🖥️ Wokwi Simulation</h5>
+<ul>
+<li>ESP32 circuit build on Wokwi</li>
+<li>PIR + Ultrasonic + LED + Buzzer wire</li>
+<li>OLED display working on Wokwi</li>
+<li>Fingerprint simulate (button/serial)</li>
+<li>WiFi test (Wokwi-GUEST)</li>
+<li>Full attendance flow test end-to-end</li>
+<li>🎬 Screen record the simulation!</li>
+</ul>
+<div class="hours">⏱️ ~15 hours | 📄 Output: Working Wokwi project</div>
+</div>
+<div class="task-card">
+<h5 style="color:#ff9f43">🤖 ML Model Training — Part 1</h5>
+<ul>
+<li>approach1_sklearn.py run ✅ (done!)</li>
+<li>Activity classification — 5 algorithms compare</li>
+<li>Anomaly detection — Isolation Forest</li>
+<li>Results table prepare</li>
+<li>Confusion matrix screenshots</li>
+<li>Feature importance chart</li>
+</ul>
+<div class="hours">⏱️ ~10 hours | 📄 Output: Scikit-learn results</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>✅ Week 3 Deliverables:</h5>
+<p>① Wokwi simulation link (shareable!) ② Simulation video recording ③ Scikit-learn model results ④ Comparison tables</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:37.5%;background:#38bdf8"></div></div>
+</div>
+</div>
+
+<!-- WEEK 4 -->
+<div class="week w-train">
+<div class="week-hdr">
+<h3 style="color:#ff9f43">📅 Week 4: Jun 14 — Jun 20</h3>
+<span class="phase phase-train">🤖 ML + DASHBOARD</span>
+<span class="dates">৭ দিন</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: TensorFlow model + Web Dashboard + Paper Chapter 3</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#ff9f43">🤖 ML Model Training — Part 2</h5>
+<ul>
+<li>approach2_tensorflow.py run ✅ (done!)</li>
+<li>DNN activity classifier results</li>
+<li>Autoencoder anomaly detection</li>
+<li>approach3_tflite_edge.py run ✅ (done!)</li>
+<li>TFLite model convert + size comparison</li>
+<li>All 3 approaches comparison table</li>
+</ul>
+<div class="hours">⏱️ ~10 hours | 📄 Output: All ML results</div>
+</div>
+<div class="task-card">
+<h5 style="color:#6bcb77">🌐 Web Dashboard</h5>
+<ul>
+<li>Simple HTML dashboard তৈরি</li>
+<li>Firebase থেকে data fetch</li>
+<li>Attendance table display</li>
+<li>Charts (attendance rate, activity)</li>
+<li>User search + filter</li>
+<li>📝 Chapter 3 (Methodology) লেখা</li>
+</ul>
+<div class="hours">⏱️ ~15 hours | 📄 Output: Dashboard + Chapter 3</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>✅ Week 4 Deliverables:</h5>
+<p>① All 3 ML approach results ② Comparison dashboard ③ Web dashboard prototype ④ Chapter 3 draft</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:50%;background:#ff9f43"></div></div>
+</div>
+</div>
+
+<!-- WEEK 5 -->
+<div class="week w-write">
+<div class="week-hdr">
+<h3 style="color:#6bcb77">📅 Week 5: Jun 21 — Jun 27</h3>
+<span class="phase phase-write">📊 RESULTS + WRITING</span>
+<span class="dates">৭ দিন</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: Results compile + Chapter 4 (Results) + Chapter 5 (Discussion)</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#6bcb77">📊 Results Compilation</h5>
+<ul>
+<li>All accuracy tables finalize</li>
+<li>Confusion matrix — all models</li>
+<li>Charts: accuracy comparison bar chart</li>
+<li>Feature importance visualization</li>
+<li>Simulation screenshots (Wokwi)</li>
+<li>System flow diagrams finalize</li>
+<li>Fingerprint matching demo results</li>
+</ul>
+<div class="hours">⏱️ ~12 hours | 📄 Output: All figures + tables</div>
+</div>
+<div class="task-card">
+<h5 style="color:#6bcb77">📝 Paper Writing (Ch 4-5)</h5>
+<ul>
+<li>Chapter 4: Results & Analysis</li>
+<li>  - Table 1: Activity classification results</li>
+<li>  - Table 2: Anomaly detection results</li>
+<li>  - Table 3: Attendance prediction</li>
+<li>  - Table 4: Approach comparison</li>
+<li>Chapter 5: Discussion</li>
+<li>  - Findings interpret করা</li>
+<li>  - Limitations discuss করা</li>
+</ul>
+<div class="hours">⏱️ ~15 hours | 📄 Output: Chapter 4 + 5 draft</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>✅ Week 5 Deliverables:</h5>
+<p>① All result tables + charts ② Chapter 4 (Results) ③ Chapter 5 (Discussion) ④ All figures numbered</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:62.5%;background:#6bcb77"></div></div>
+</div>
+</div>
+
+<!-- WEEK 6 -->
+<div class="week w-write">
+<div class="week-hdr">
+<h3 style="color:#6bcb77">📅 Week 6: Jun 28 — Jul 4</h3>
+<span class="phase phase-write">📝 FULL PAPER DRAFT</span>
+<span class="dates">৭ দিন</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: Complete first draft of the entire paper</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#6bcb77">📝 Complete Paper Draft</h5>
+<ul>
+<li>Abstract লেখা (250 words)</li>
+<li>Chapter 1: Introduction polish</li>
+<li>Chapter 2: Literature Review polish</li>
+<li>Chapter 3: Methodology polish</li>
+<li>Chapter 6: Conclusion & Future Work</li>
+<li>References list (IEEE format)</li>
+<li>Appendices (code snippets, config)</li>
+</ul>
+<div class="hours">⏱️ ~20 hours | 📄 Output: Full paper v1</div>
+</div>
+<div class="task-card">
+<h5 style="color:#ffd93d">🎨 Figures & Formatting</h5>
+<ul>
+<li>All diagrams: system arch, use case, DFD</li>
+<li>All charts: accuracy, confusion matrix</li>
+<li>Screenshots: Wokwi, dashboard, OLED</li>
+<li>Table formatting (IEEE style)</li>
+<li>Page numbers, headers, TOC</li>
+<li>Figure/Table numbering</li>
+<li>References double-check</li>
+</ul>
+<div class="hours">⏱️ ~10 hours | 📄 Output: Formatted paper</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>✅ Week 6 Deliverables:</h5>
+<p>① Complete first draft (all chapters) ② All figures embedded ③ References complete ④ Ready for review</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:75%;background:#6bcb77"></div></div>
+</div>
+</div>
+
+<!-- WEEK 7 -->
+<div class="week w-final">
+<div class="week-hdr">
+<h3 style="color:#ff6b6b">📅 Week 7: Jul 5 — Jul 11</h3>
+<span class="phase phase-final">🔍 REVIEW + POLISH</span>
+<span class="dates">৭ দিন</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: Supervisor review, fix issues, presentation prepare</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#ff6b6b">🔍 Review & Fix</h5>
+<ul>
+<li>Supervisor কে draft দেখানো</li>
+<li>Feedback অনুযায়ী corrections</li>
+<li>Grammar + spelling check</li>
+<li>Plagiarism check (Turnitin)</li>
+<li>Peer review (friend কে পড়তে দিন)</li>
+<li>Code comments + cleanup</li>
+<li>Final simulation test</li>
+</ul>
+<div class="hours">⏱️ ~15 hours</div>
+</div>
+<div class="task-card">
+<h5 style="color:#a855f7">🎤 Presentation Prepare</h5>
+<ul>
+<li>PowerPoint/Slides তৈরি (15-20 slides)</li>
+<li>Demo video record (Wokwi simulation)</li>
+<li>Key results highlight করা</li>
+<li>Q&A preparation (possible questions)</li>
+<li>Practice presentation (3 বার)</li>
+<li>Backup: code, video, PDF offline</li>
+</ul>
+<div class="hours">⏱️ ~10 hours</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>✅ Week 7 Deliverables:</h5>
+<p>① Reviewed & corrected paper ② Presentation slides ③ Demo video ④ Q&A prepared</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:87.5%;background:#ff6b6b"></div></div>
+</div>
+</div>
+
+<!-- WEEK 8 -->
+<div class="week w-final">
+<div class="week-hdr">
+<h3 style="color:#ff6b6b">📅 Week 8: Jul 12 — Jul 18</h3>
+<span class="phase phase-final">🎓 FINAL SUBMISSION</span>
+<span class="dates">৭ দিন — DEADLINE!</span>
+</div>
+<div class="week-body">
+<div class="focus">🎯 Focus: Final polish + Submit + Defense!</div>
+<div class="task-grid">
+<div class="task-card">
+<h5 style="color:#00ff88">📄 Final Submission</h5>
+<ul>
+<li>Final proofread (last time!)</li>
+<li>PDF generate + check formatting</li>
+<li>Print copies (if required)</li>
+<li>Submit paper to supervisor</li>
+<li>Submit code + dataset (USB/GitHub)</li>
+<li>Submit presentation slides</li>
+</ul>
+<div class="hours">⏱️ ~5 hours</div>
+</div>
+<div class="task-card">
+<h5 style="color:#00ff88">🎓 Defense / Presentation</h5>
+<ul>
+<li>Final presentation practice</li>
+<li>Defense day — present!</li>
+<li>Live demo (Wokwi on projector)</li>
+<li>Q&A session</li>
+<li>🎉 DONE!</li>
+</ul>
+<div class="hours">⏱️ ~5 hours</div>
+</div>
+</div>
+<div class="deliverable">
+<h5>🎉 Week 8 Deliverables:</h5>
+<p>① Final paper submitted ② Presentation given ③ Demo shown ④ 🎓 THESIS COMPLETE!</p>
+</div>
+<div class="progress-bar"><div class="progress-fill" style="width:100%;background:linear-gradient(90deg,#00ff88,#ffd93d)"></div></div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== PAPER STRUCTURE ===== -->
+<div class="sec">
+<h2>3. 📝 Paper Structure — কোন Chapter এ কি লিখবেন</h2>
+<div class="bx">
+<svg width="100%" viewBox="0 0 900 520">
+<text x="450" y="22" text-anchor="middle" fill="#00d4ff" font-size="15" font-weight="bold">Thesis Paper Structure — Chapter-wise Breakdown</text>
+
+<!-- Chapters -->
+<rect x="20" y="40" width="250" height="68" rx="10" fill="#0f1020" stroke="#00d4ff" stroke-width="2"/>
+<text x="35" y="62" fill="#00d4ff" font-size="13" font-weight="bold">📄 Abstract</text>
+<text x="35" y="80" fill="#aaa" font-size="10">250 words | Problem + Method + Results</text>
+<text x="35" y="96" fill="#666" font-size="9">✍️ Write LAST (after everything else)</text>
+
+<rect x="20" y="118" width="250" height="68" rx="10" fill="#0f1020" stroke="#6bcb77" stroke-width="1.5"/>
+<text x="35" y="140" fill="#6bcb77" font-size="13" font-weight="bold">Ch 1: Introduction</text>
+<text x="35" y="158" fill="#aaa" font-size="10">Background, Problem, Objectives</text>
+<text x="35" y="174" fill="#666" font-size="9">📏 3-4 pages | ✍️ Week 1</text>
+
+<rect x="20" y="196" width="250" height="68" rx="10" fill="#0f1020" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="35" y="218" fill="#38bdf8" font-size="13" font-weight="bold">Ch 2: Literature Review</text>
+<text x="35" y="236" fill="#aaa" font-size="10">5-8 related works + research gap</text>
+<text x="35" y="252" fill="#666" font-size="9">📏 5-7 pages | ✍️ Week 1-2</text>
+
+<rect x="20" y="274" width="250" height="82" rx="10" fill="#0f1020" stroke="#a855f7" stroke-width="1.5"/>
+<text x="35" y="296" fill="#a855f7" font-size="13" font-weight="bold">Ch 3: Methodology</text>
+<text x="35" y="314" fill="#aaa" font-size="10">System design, sensors, algorithms</text>
+<text x="35" y="330" fill="#aaa" font-size="10">Data collection, ML approach</text>
+<text x="35" y="344" fill="#666" font-size="9">📏 8-10 pages | ✍️ Week 3-4</text>
+
+<rect x="320" y="40" width="260" height="110" rx="10" fill="#0f1020" stroke="#ff9f43" stroke-width="2"/>
+<text x="335" y="62" fill="#ff9f43" font-size="13" font-weight="bold">Ch 4: Results & Analysis</text>
+<text x="335" y="82" fill="#aaa" font-size="10">Accuracy tables, confusion matrix</text>
+<text x="335" y="98" fill="#aaa" font-size="10">Comparison charts, screenshots</text>
+<text x="335" y="114" fill="#aaa" font-size="10">Simulation results, demo output</text>
+<text x="335" y="138" fill="#666" font-size="9">📏 8-12 pages | ✍️ Week 5 | ⭐ MOST IMPORTANT</text>
+
+<rect x="320" y="165" width="260" height="82" rx="10" fill="#0f1020" stroke="#ffd93d" stroke-width="1.5"/>
+<text x="335" y="187" fill="#ffd93d" font-size="13" font-weight="bold">Ch 5: Discussion</text>
+<text x="335" y="205" fill="#aaa" font-size="10">Findings explain, compare with</text>
+<text x="335" y="221" fill="#aaa" font-size="10">related work, limitations</text>
+<text x="335" y="237" fill="#666" font-size="9">📏 3-5 pages | ✍️ Week 5</text>
+
+<rect x="320" y="257" width="260" height="82" rx="10" fill="#0f1020" stroke="#00ff88" stroke-width="1.5"/>
+<text x="335" y="279" fill="#00ff88" font-size="13" font-weight="bold">Ch 6: Conclusion</text>
+<text x="335" y="297" fill="#aaa" font-size="10">Summary, contributions</text>
+<text x="335" y="313" fill="#aaa" font-size="10">Future work suggestions</text>
+<text x="335" y="329" fill="#666" font-size="9">📏 2-3 pages | ✍️ Week 6</text>
+
+<rect x="320" y="349" width="260" height="52" rx="10" fill="#0f1020" stroke="#888" stroke-width="1.5"/>
+<text x="335" y="371" fill="#aaa" font-size="13" font-weight="bold">References</text>
+<text x="335" y="391" fill="#666" font-size="10">8-15 references, IEEE format</text>
+
+<!-- What you already have! -->
+<rect x="630" y="40" width="260" height="470" rx="12" fill="#0a1a0a" stroke="#00ff88" stroke-width="2"/>
+<text x="760" y="68" text-anchor="middle" fill="#00ff88" font-size="14" font-weight="bold">✅ আপনার কাছে ALREADY আছে:</text>
+
+<text x="645" y="100" fill="#6bcb77" font-size="11">✅ System architecture diagram</text>
+<text x="645" y="122" fill="#6bcb77" font-size="11">✅ Use case diagram</text>
+<text x="645" y="144" fill="#6bcb77" font-size="11">✅ Data flow diagram</text>
+<text x="645" y="166" fill="#6bcb77" font-size="11">✅ Sequence diagram</text>
+<text x="645" y="188" fill="#6bcb77" font-size="11">✅ Hardware wiring diagram</text>
+<text x="645" y="210" fill="#6bcb77" font-size="11">✅ Activity flowchart</text>
+<text x="645" y="232" fill="#6bcb77" font-size="11">✅ Complete system flow</text>
+<text x="645" y="258" fill="#00d4ff" font-size="11">✅ 3,780 sensor data records</text>
+<text x="645" y="280" fill="#00d4ff" font-size="11">✅ 215 attendance records</text>
+<text x="645" y="306" fill="#ff9f43" font-size="11">✅ Scikit-learn: 5 models (91%)</text>
+<text x="645" y="328" fill="#ff9f43" font-size="11">✅ TensorFlow: DNN + Autoencoder</text>
+<text x="645" y="350" fill="#ff9f43" font-size="11">✅ TFLite: Edge ML (3.3KB)</text>
+<text x="645" y="376" fill="#a855f7" font-size="11">✅ ESP32 Arduino code</text>
+<text x="645" y="398" fill="#a855f7" font-size="11">✅ Fingerprint system code</text>
+<text x="645" y="420" fill="#a855f7" font-size="11">✅ Wokwi simulation code</text>
+<text x="645" y="446" fill="#38bdf8" font-size="11">✅ Comparison dashboard</text>
+<text x="645" y="468" fill="#38bdf8" font-size="11">✅ Behaviour analysis demo</text>
+<text x="645" y="494" fill="#ffd93d" font-size="12" font-weight="bold">🎯 ~50% কাজ ALREADY done!</text>
+</svg>
+</div>
+</div>
+
+<!-- ===== DAILY SCHEDULE ===== -->
+<div class="sec">
+<h2>4. ⏰ Suggested Daily Schedule</h2>
+<div class="bx">
+<svg width="100%" viewBox="0 0 750 200">
+<text x="375" y="22" text-anchor="middle" fill="#ffd93d" font-size="14" font-weight="bold">প্রতিদিন ৩-৪ ঘণ্টা কাজ করলেই যথেষ্ট!</text>
+
+<rect x="20" y="40" width="160" height="55" rx="8" fill="#0f1020" stroke="#ff9f43" stroke-width="1.5"/>
+<text x="100" y="62" text-anchor="middle" fill="#ff9f43" font-size="12" font-weight="bold">🌅 সকাল (1 hr)</text>
+<text x="100" y="82" text-anchor="middle" fill="#aaa" font-size="10">Paper writing</text>
+
+<text x="195" y="70" fill="#555" font-size="18">→</text>
+
+<rect x="210" y="40" width="160" height="55" rx="8" fill="#0f1020" stroke="#a855f7" stroke-width="1.5"/>
+<text x="290" y="62" text-anchor="middle" fill="#a855f7" font-size="12" font-weight="bold">🌞 দুপুর (1.5 hr)</text>
+<text x="290" y="82" text-anchor="middle" fill="#aaa" font-size="10">Coding / Simulation</text>
+
+<text x="385" y="70" fill="#555" font-size="18">→</text>
+
+<rect x="400" y="40" width="160" height="55" rx="8" fill="#0f1020" stroke="#00d4ff" stroke-width="1.5"/>
+<text x="480" y="62" text-anchor="middle" fill="#00d4ff" font-size="12" font-weight="bold">🌙 রাত (1 hr)</text>
+<text x="480" y="82" text-anchor="middle" fill="#aaa" font-size="10">ML / Results / Review</text>
+
+<text x="575" y="70" fill="#555" font-size="18">→</text>
+
+<rect x="590" y="40" width="145" height="55" rx="8" fill="#0a1a0a" stroke="#00ff88" stroke-width="1.5"/>
+<text x="662" y="62" text-anchor="middle" fill="#00ff88" font-size="12" font-weight="bold">✅ 3.5 hrs/day</text>
+<text x="662" y="82" text-anchor="middle" fill="#aaa" font-size="10">= 196 hrs total</text>
+
+<rect x="100" y="120" width="550" height="60" rx="10" fill="rgba(0,255,136,.04)" stroke="#00ff88" stroke-width="1"/>
+<text x="375" y="145" text-anchor="middle" fill="#00ff88" font-size="13" font-weight="bold">📊 Total needed: ~150-180 hours | You have: 8 weeks × 7 days × 3.5 hrs = 196 hours ✅</text>
+<text x="375" y="168" text-anchor="middle" fill="#aaa" font-size="11">Weekend এ extra ২-৩ ঘণ্টা করলে আরো comfortable হবে!</text>
+</svg>
+</div>
+
+<div class="tip">
+💡 <strong>Pro Tips:</strong><br>
+• Paper writing সকালে করুন — মাথা fresh থাকে<br>
+• Coding দুপুরে — concentration peak time<br>
+• প্রতি সপ্তাহে ১ দিন পুরো rest নিন — burnout এড়ান<br>
+• Supervisor কে Week 4 এবং Week 6 এ draft দেখান — early feedback critical<br>
+• আপনার কাছে already ~50% কাজ done (diagrams, data, models, code) — so relax! 😊
+</div>
+</div>
+
+<div style="text-align:center;padding:25px;color:#555;font-size:.82em">
+8-Week Thesis Roadmap — May 24 to July 18, 2026<br>
+Sensor-Based Attendance & Activity Tracking System
+</div>
+</body>
+</html>

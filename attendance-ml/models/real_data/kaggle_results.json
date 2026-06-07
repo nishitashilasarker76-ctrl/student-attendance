@@ -1,0 +1,143 @@
+{
+  "activity_recognition": {
+    "dataset": "UCI HAR (Kaggle)",
+    "train_samples": 7352,
+    "test_samples": 2947,
+    "features": 561,
+    "classes": [
+      "LAYING",
+      "SITTING",
+      "STANDING",
+      "WALKING",
+      "WALKING_DOWNSTAIRS",
+      "WALKING_UPSTAIRS"
+    ],
+    "scores": {
+      "Random Forest": 0.9267,
+      "Gradient Boosting": 0.9203,
+      "SVM (RBF)": 0.9542,
+      "KNN (k=7)": 0.8887,
+      "Logistic Regression": 0.9545
+    },
+    "best_model": "Logistic Regression",
+    "best_accuracy": 0.9545,
+    "confusion_matrix": [
+      [
+        533,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        430,
+        58,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        14,
+        518,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        493,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        6,
+        393,
+        19
+      ],
+      [
+        0,
+        0,
+        0,
+        24,
+        1,
+        446
+      ]
+    ]
+  },
+  "occupancy_detection": {
+    "dataset": "UCI Occupancy (Kaggle)",
+    "train_samples": 8143,
+    "test_samples": 2665,
+    "features": [
+      "Temperature",
+      "Humidity",
+      "Light",
+      "CO2",
+      "HumidityRatio"
+    ],
+    "scores": {
+      "Random Forest": 0.9535,
+      "Gradient Boosting": 0.9437,
+      "SVM": 0.9054,
+      "Logistic Regression": 0.9771,
+      "KNN": 0.9197,
+      "Isolation Forest": 0.842
+    },
+    "best_model": "Logistic Regression",
+    "best_accuracy": 0.9771,
+    "confusion_matrix": [
+      [
+        1639,
+        54
+      ],
+      [
+        7,
+        965
+      ]
+    ]
+  },
+  "student_behaviour": {
+    "dataset": "xAPI-Edu-Data (Kaggle)",
+    "samples": 480,
+    "features": 16,
+    "classes": [
+      "H",
+      "L",
+      "M"
+    ],
+    "scores": {
+      "Random Forest": 0.5938,
+      "Gradient Boosting": 0.6146,
+      "SVM": 0.6458,
+      "KNN": 0.5833,
+      "Decision Tree": 0.6146
+    },
+    "best_model": "SVM",
+    "best_accuracy": 0.6458,
+    "confusion_matrix": [
+      [
+        17,
+        1,
+        11
+      ],
+      [
+        0,
+        21,
+        4
+      ],
+      [
+        10,
+        8,
+        24
+      ]
+    ]
+  }
+}

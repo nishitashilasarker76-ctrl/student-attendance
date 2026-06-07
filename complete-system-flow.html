@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Complete System Flow — Single Unified View</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#060610;color:#ddd;line-height:1.6}
+.hdr{background:linear-gradient(135deg,#0a0a1e,#0f2460);padding:35px 20px;text-align:center;border-bottom:3px solid #00ff88}
+.hdr h1{font-size:1.9em;color:#00ff88}
+.hdr p{color:#999;max-width:700px;margin:8px auto 0}
+.sec{max-width:1150px;margin:30px auto;padding:0 18px}
+.sec h2{font-size:1.35em;color:#00d4ff;margin-bottom:14px;border-bottom:2px solid #1a2a4c;padding-bottom:6px}
+.bx{background:#0c0c1c;border:1px solid #1a1a35;border-radius:16px;padding:25px;margin-bottom:22px;overflow-x:auto}
+.bx h3{color:#ff9f43;text-align:center;margin-bottom:14px;font-size:1.15em}
+svg text{font-family:'Segoe UI',sans-serif}
+
+.simple-box{background:linear-gradient(135deg,#0a1a0a,#0a200a);border:2px solid #00ff88;border-radius:16px;padding:25px;text-align:center;margin:20px 0}
+.simple-box h3{color:#00ff88;font-size:1.4em;margin-bottom:10px}
+.simple-box p{color:#b0ffb0;font-size:1.05em}
+
+.step-list{counter-reset:steps}
+.step-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid #151530;align-items:flex-start}
+.step-item:last-child{border:none}
+.step-num{counter-increment:steps;min-width:48px;height:48px;background:linear-gradient(135deg,#0f3460,#00d4ff);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:1.2em;flex-shrink:0}
+.step-num::before{content:counter(steps)}
+.step-body h4{color:#00d4ff;margin-bottom:3px;font-size:1.05em}
+.step-body p{color:#aaa;font-size:.92em}
+.step-body .comp{display:inline-block;background:rgba(255,159,67,.12);color:#ff9f43;padding:2px 10px;border-radius:10px;font-size:.8em;font-weight:700;margin:2px}
+.step-body .action{display:inline-block;background:rgba(0,255,136,.1);color:#00ff88;padding:2px 10px;border-radius:10px;font-size:.8em;font-weight:700;margin:2px}
+
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:23px;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,#00d4ff,#6bcb77,#ffd93d,#ff6b6b,#a855f7,#00ff88);border-radius:2px}
+.tl-item{position:relative;padding:14px 0 14px 30px;border-bottom:1px solid #10102a}
+.tl-item:last-child{border:none}
+.tl-dot{position:absolute;left:-24px;top:20px;width:16px;height:16px;border-radius:50%;border:3px solid #00d4ff;background:#060610}
+.tl-item:nth-child(2) .tl-dot{border-color:#6bcb77}
+.tl-item:nth-child(3) .tl-dot{border-color:#ffd93d}
+.tl-item:nth-child(4) .tl-dot{border-color:#ff9f43}
+.tl-item:nth-child(5) .tl-dot{border-color:#ff6b6b}
+.tl-item:nth-child(6) .tl-dot{border-color:#a855f7}
+.tl-item:nth-child(7) .tl-dot{border-color:#00ff88}
+.tl-time{color:#00d4ff;font-size:.82em;font-weight:700}
+.tl-title{color:#fff;font-size:1em;font-weight:700;margin:2px 0}
+.tl-desc{color:#888;font-size:.88em}
+.tl-comp{color:#ff9f43;font-size:.8em}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+<h1>🔄 Complete System Flow — সব Component একসাথে</h1>
+<p>Confusion দূর! একটি মাত্র diagram এ দেখুন পুরো system কিভাবে step-by-step কাজ করে</p>
+</div>
+
+<!-- ===== THE ONE-LINE ANSWER ===== -->
+<div class="sec">
+<div class="simple-box">
+<h3>💡 সহজ ভাষায় পুরো System:</h3>
+<p style="font-size:1.2em;margin:12px 0">
+👤 কেউ ঘরে ঢোকে → 📡 PIR detect করে "কেউ এসেছে!" → 🖥️ OLED বলে "আঙুল দিন" →<br>
+👆 Fingerprint scan → ✅ "এটা Rahim!" → 📶 WiFi দিয়ে cloud এ data যায় →<br>
+📊 Admin dashboard এ attendance দেখা যায় → LED ✅ + Buzzer 🔊
+</p>
+<p style="color:#6bcb77;font-size:.95em">⏱️ পুরো process: মাত্র ২-৩ সেকেন্ড!</p>
+</div>
+</div>
+
+<!-- ===== MASTER FLOW DIAGRAM ===== -->
+<div class="sec">
+<h2>1. 🗺️ Master Flow Diagram — সব Component এক ছবিতে</h2>
+<div class="bx">
+<h3>Person ঢোকা থেকে Dashboard এ দেখা পর্যন্ত — Complete Journey</h3>
+<svg width="100%" viewBox="0 0 1050 880">
+
+<!-- ===================== PHYSICAL LAYER (Left) ===================== -->
+<rect x="15" y="15" width="350" height="850" rx="18" fill="#080818" stroke="#00d4ff" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="190" y="48" text-anchor="middle" fill="#00d4ff" font-size="16" font-weight="bold">🏫 PHYSICAL LAYER</text>
+<text x="190" y="68" text-anchor="middle" fill="#666" font-size="11">(Classroom / Office / Lab — যেখানে sensor বসানো)</text>
+
+<!-- Step 1: Person enters -->
+<rect x="40" y="90" width="300" height="75" rx="12" fill="#0a1a0a" stroke="#6bcb77" stroke-width="2"/>
+<text x="55" y="112" fill="#6bcb77" font-size="14" font-weight="bold">① 👤 ব্যক্তি ঘরে প্রবেশ করে</text>
+<text x="55" y="132" fill="#aaa" font-size="11">দরজা দিয়ে classroom/office এ ঢুকছে</text>
+<text x="55" y="150" fill="#666" font-size="10">কোনো device touch করার আগেই...</text>
+
+<!-- Arrow down -->
+<line x1="190" y1="165" x2="190" y2="185" stroke="#6bcb77" stroke-width="2"/>
+<polygon points="185,180 190,190 195,180" fill="#6bcb77"/>
+
+<!-- Step 2: PIR detects -->
+<rect x="40" y="190" width="300" height="90" rx="12" fill="#0f1020" stroke="#ff6b6b" stroke-width="2"/>
+<text x="55" y="215" fill="#ff6b6b" font-size="14" font-weight="bold">② 🔴 PIR Sensor — Motion Detect!</text>
+<text x="55" y="237" fill="#fff" font-size="11">Infrared ray দিয়ে শরীরের তাপ detect করে</text>
+<text x="55" y="255" fill="#aaa" font-size="10">Output: HIGH signal → ESP32 কে জানায়</text>
+<text x="55" y="270" fill="#666" font-size="9">Component: HC-SR501 | Pin: GPIO 27</text>
+
+<!-- Arrow down -->
+<line x1="190" y1="280" x2="190" y2="300" stroke="#ff6b6b" stroke-width="2"/>
+<polygon points="185,295 190,305 195,295" fill="#ff6b6b"/>
+
+<!-- Step 3: Ultrasonic measures -->
+<rect x="40" y="305" width="300" height="80" rx="12" fill="#0f1020" stroke="#38bdf8" stroke-width="2"/>
+<text x="55" y="328" fill="#38bdf8" font-size="14" font-weight="bold">③ 📏 Ultrasonic — Distance Check</text>
+<text x="55" y="348" fill="#fff" font-size="11">কতদূরে আছে? &lt;50cm = কাছে এসেছে!</text>
+<text x="55" y="365" fill="#aaa" font-size="10">Sound wave bounce করে distance মাপে</text>
+<text x="55" y="378" fill="#666" font-size="9">Component: HC-SR04 | Pins: GPIO 13, 12</text>
+
+<!-- Arrow down -->
+<line x1="190" y1="385" x2="190" y2="405" stroke="#38bdf8" stroke-width="2"/>
+<polygon points="185,400 190,410 195,400" fill="#38bdf8"/>
+
+<!-- Step 4: OLED prompts -->
+<rect x="40" y="410" width="300" height="70" rx="12" fill="#0f1020" stroke="#ffd93d" stroke-width="2"/>
+<text x="55" y="433" fill="#ffd93d" font-size="14" font-weight="bold">④ 🖥️ OLED Display — "আঙুল দিন!"</text>
+<text x="55" y="453" fill="#fff" font-size="11">Screen এ message: "Place your finger"</text>
+<text x="55" y="470" fill="#666" font-size="9">Component: SSD1306 128×64 | I2C: SDA=21, SCL=22</text>
+
+<!-- Arrow down -->
+<line x1="190" y1="480" x2="190" y2="500" stroke="#ffd93d" stroke-width="2"/>
+<polygon points="185,495 190,505 195,495" fill="#ffd93d"/>
+
+<!-- Step 5: Fingerprint scan -->
+<rect x="40" y="505" width="300" height="110" rx="12" fill="#0a0a20" stroke="#a855f7" stroke-width="3"/>
+<text x="55" y="530" fill="#a855f7" font-size="15" font-weight="bold">⑤ 👆 FINGERPRINT SCAN</text>
+<text x="55" y="552" fill="#fff" font-size="11">আঙুল sensor এ রাখে → image capture</text>
+<text x="55" y="570" fill="#fff" font-size="11">→ template তৈরি → internal DB search</text>
+<text x="55" y="590" fill="#00ff88" font-size="12" font-weight="bold">→ Match! ID=#3, Confidence=285/300</text>
+<text x="55" y="608" fill="#666" font-size="9">Component: R307/AS608 | UART: RX=16, TX=17</text>
+<text x="280" y="530" fill="#a855f7" font-size="9">⭐ MAIN</text>
+<text x="275" y="542" fill="#a855f7" font-size="9">IDENTIFIER</text>
+
+<!-- Arrow down -->
+<line x1="190" y1="615" x2="190" y2="635" stroke="#a855f7" stroke-width="2"/>
+<polygon points="185,630 190,640 195,630" fill="#a855f7"/>
+
+<!-- Step 6: Feedback -->
+<rect x="40" y="640" width="300" height="80" rx="12" fill="#0f1020" stroke="#00ff88" stroke-width="2"/>
+<text x="55" y="663" fill="#00ff88" font-size="14" font-weight="bold">⑥ ✅ Feedback — "Welcome Rahim!"</text>
+<text x="55" y="683" fill="#fff" font-size="11">OLED: নাম + ID দেখায় | LED: সবুজ ✅</text>
+<text x="55" y="700" fill="#fff" font-size="11">Buzzer: beep 🔊 | Attendance: MARKED!</text>
+<text x="55" y="714" fill="#666" font-size="9">Components: LED (GPIO 2,4) + Buzzer (GPIO 15)</text>
+
+<!-- Arrow down to activity -->
+<line x1="190" y1="720" x2="190" y2="745" stroke="#00ff88" stroke-width="2"/>
+<polygon points="185,740 190,750 195,740" fill="#00ff88"/>
+
+<!-- Step 6b: Activity tracking -->
+<rect x="40" y="750" width="300" height="85" rx="12" fill="#0f1020" stroke="#fb923c" stroke-width="2"/>
+<text x="55" y="773" fill="#fb923c" font-size="14" font-weight="bold">⑦ 🏃 Activity Tracking (চলমান)</text>
+<text x="55" y="793" fill="#fff" font-size="11">Accelerometer: walking/sitting/standing</text>
+<text x="55" y="811" fill="#fff" font-size="11">PIR: ক্রমাগত presence monitor করছে</text>
+<text x="55" y="826" fill="#666" font-size="9">Component: MPU6050 | I2C | IR beam for exit</text>
+
+
+<!-- ===================== BRAIN (Center) ===================== -->
+<rect x="390" y="200" width="250" height="460" rx="20" fill="#0a1030" stroke="#00d4ff" stroke-width="3"/>
+<text x="515" y="235" text-anchor="middle" fill="#00d4ff" font-size="18" font-weight="bold">🧠 ESP32</text>
+<text x="515" y="258" text-anchor="middle" fill="#fff" font-size="12">মস্তিষ্ক — সব control করে</text>
+
+<line x1="420" y1="270" x2="610" y2="270" stroke="#1a3050" stroke-width="1"/>
+
+<text x="415" y="295" fill="#aaa" font-size="11">📥 Sensor data receive করে</text>
+<text x="415" y="315" fill="#aaa" font-size="11">⚙️ Data process + validate করে</text>
+<text x="415" y="335" fill="#aaa" font-size="11">🔍 Fingerprint ID lookup করে</text>
+<text x="415" y="355" fill="#aaa" font-size="11">🧮 Activity classify করে (ML)</text>
+<text x="415" y="375" fill="#aaa" font-size="11">📡 WiFi দিয়ে cloud এ পাঠায়</text>
+<text x="415" y="395" fill="#aaa" font-size="11">🖥️ OLED display update করে</text>
+<text x="415" y="415" fill="#aaa" font-size="11">💡 LED + Buzzer control করে</text>
+<text x="415" y="435" fill="#aaa" font-size="11">🚨 Anomaly alert পাঠায়</text>
+
+<line x1="420" y1="450" x2="610" y2="450" stroke="#1a3050" stroke-width="1"/>
+
+<text x="515" y="475" text-anchor="middle" fill="#ffd93d" font-size="11" font-weight="bold">📶 Built-in WiFi</text>
+<text x="515" y="495" text-anchor="middle" fill="#aaa" font-size="10">SSID: "Wokwi-GUEST"</text>
+<text x="515" y="515" text-anchor="middle" fill="#aaa" font-size="10">Protocol: MQTT / HTTPS</text>
+
+<rect x="430" y="530" width="170" height="40" rx="8" fill="#0f3460" stroke="#ffd93d" stroke-width="1.5"/>
+<text x="515" y="555" text-anchor="middle" fill="#ffd93d" font-size="11" font-weight="bold">JSON Data Packet:</text>
+
+<text x="415" y="590" fill="#6bcb77" font-size="9" font-family="monospace">{"id":"STU-003",</text>
+<text x="415" y="604" fill="#6bcb77" font-size="9" font-family="monospace"> "name":"Karim",</text>
+<text x="415" y="618" fill="#6bcb77" font-size="9" font-family="monospace"> "time":"08:45:23",</text>
+<text x="415" y="632" fill="#6bcb77" font-size="9" font-family="monospace"> "activity":"walking",</text>
+<text x="415" y="646" fill="#6bcb77" font-size="9" font-family="monospace"> "confidence":285}</text>
+
+<!-- Arrows: Physical → ESP32 -->
+<line x1="340" y1="235" x2="390" y2="280" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5,3"/>
+<line x1="340" y1="345" x2="390" y2="340" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5,3"/>
+<line x1="340" y1="445" x2="390" y2="380" stroke="#ffd93d" stroke-width="2" stroke-dasharray="5,3"/>
+<line x1="340" y1="555" x2="390" y2="420" stroke="#a855f7" stroke-width="2" stroke-dasharray="5,3"/>
+<line x1="340" y1="680" x2="390" y2="440" stroke="#00ff88" stroke-width="2" stroke-dasharray="5,3"/>
+<line x1="340" y1="790" x2="390" y2="450" stroke="#fb923c" stroke-width="2" stroke-dasharray="5,3"/>
+
+<!-- Arrow labels -->
+<text x="355" y="260" fill="#ff6b6b" font-size="8" transform="rotate(-15,355,260)">PIR signal</text>
+<text x="358" y="335" fill="#38bdf8" font-size="8">distance</text>
+<text x="358" y="405" fill="#ffd93d" font-size="8">I2C</text>
+<text x="358" y="480" fill="#a855f7" font-size="8">UART fingerID</text>
+
+
+<!-- ===================== CLOUD LAYER (Right) ===================== -->
+<rect x="680" y="15" width="350" height="850" rx="18" fill="#080818" stroke="#6bcb77" stroke-width="2" stroke-dasharray="8,4"/>
+<text x="855" y="48" text-anchor="middle" fill="#6bcb77" font-size="16" font-weight="bold">☁️ CLOUD + APPLICATION LAYER</text>
+<text x="855" y="68" text-anchor="middle" fill="#666" font-size="11">(Internet — যেকোনো জায়গা থেকে access)</text>
+
+<!-- Arrow ESP32 → Cloud -->
+<line x1="640" y1="430" x2="700" y2="250" stroke="#ffd93d" stroke-width="3"/>
+<polygon points="697,244 705,248 700,256" fill="#ffd93d"/>
+<text x="658" y="320" fill="#ffd93d" font-size="11" font-weight="bold" transform="rotate(-50,658,320)">📶 WiFi → Internet</text>
+
+<!-- Cloud: Firebase -->
+<rect x="710" y="90" width="290" height="90" rx="12" fill="#0f1020" stroke="#ffd93d" stroke-width="2"/>
+<text x="725" y="115" fill="#ffd93d" font-size="14" font-weight="bold">⑧ 🔥 Firebase / Cloud DB</text>
+<text x="725" y="137" fill="#fff" font-size="11">JSON data receive → store করে</text>
+<text x="725" y="155" fill="#aaa" font-size="10">Real-time database — instant sync</text>
+<text x="725" y="172" fill="#666" font-size="9">Firebase Realtime DB / Firestore / AWS IoT</text>
+
+<!-- Arrow down -->
+<line x1="855" y1="180" x2="855" y2="205" stroke="#ffd93d" stroke-width="2"/>
+<polygon points="850,200 855,210 860,200" fill="#ffd93d"/>
+
+<!-- Cloud: API -->
+<rect x="710" y="210" width="290" height="80" rx="12" fill="#0f1020" stroke="#38bdf8" stroke-width="2"/>
+<text x="725" y="235" fill="#38bdf8" font-size="14" font-weight="bold">⑨ 🔗 REST API Server</text>
+<text x="725" y="255" fill="#fff" font-size="11">Data process + business logic</text>
+<text x="725" y="272" fill="#aaa" font-size="10">Node.js / Flask / Express.js</text>
+<text x="725" y="285" fill="#666" font-size="9">Attendance calculation, reports generate</text>
+
+<!-- Arrow down -->
+<line x1="855" y1="290" x2="855" y2="315" stroke="#38bdf8" stroke-width="2"/>
+<polygon points="850,310 855,320 860,310" fill="#38bdf8"/>
+
+<!-- Cloud: Web Dashboard -->
+<rect x="710" y="320" width="290" height="100" rx="12" fill="#0a1a0a" stroke="#00ff88" stroke-width="2"/>
+<text x="725" y="345" fill="#00ff88" font-size="14" font-weight="bold">⑩ 🖥️ Web Dashboard</text>
+<text x="725" y="367" fill="#fff" font-size="11">Admin panel — attendance monitor</text>
+<text x="725" y="387" fill="#fff" font-size="11">Charts, reports, CSV download</text>
+<text x="725" y="407" fill="#aaa" font-size="10">React.js / HTML+CSS+JS</text>
+<text x="725" y="415" fill="#666" font-size="9">Role: Teacher, Admin, Principal</text>
+
+<!-- Arrow down -->
+<line x1="855" y1="420" x2="855" y2="445" stroke="#00ff88" stroke-width="2"/>
+<polygon points="850,440 855,450 860,440" fill="#00ff88"/>
+
+<!-- Cloud: Mobile App -->
+<rect x="710" y="450" width="290" height="90" rx="12" fill="#0f1020" stroke="#a855f7" stroke-width="2"/>
+<text x="725" y="475" fill="#a855f7" font-size="14" font-weight="bold">⑪ 📱 Mobile App</text>
+<text x="725" y="497" fill="#fff" font-size="11">Student → নিজের attendance দেখে</text>
+<text x="725" y="515" fill="#fff" font-size="11">Push notification: "আজ late হয়েছেন!"</text>
+<text x="725" y="533" fill="#666" font-size="9">Flutter / React Native</text>
+
+<!-- Arrow down -->
+<line x1="855" y1="540" x2="855" y2="565" stroke="#a855f7" stroke-width="2"/>
+<polygon points="850,560 855,570 860,560" fill="#a855f7"/>
+
+<!-- Cloud: Reports -->
+<rect x="710" y="570" width="290" height="90" rx="12" fill="#0f1020" stroke="#ff9f43" stroke-width="2"/>
+<text x="725" y="595" fill="#ff9f43" font-size="14" font-weight="bold">⑫ 📊 Analytics & Reports</text>
+<text x="725" y="617" fill="#fff" font-size="11">Attendance rate, late trends, patterns</text>
+<text x="725" y="635" fill="#fff" font-size="11">Behaviour analysis: regular/irregular</text>
+<text x="725" y="653" fill="#666" font-size="9">CSV, PDF export | Charts (Chart.js)</text>
+
+<!-- Arrow down -->
+<line x1="855" y1="660" x2="855" y2="685" stroke="#ff9f43" stroke-width="2"/>
+<polygon points="850,680 855,690 860,680" fill="#ff9f43"/>
+
+<!-- Cloud: Alerts -->
+<rect x="710" y="690" width="290" height="80" rx="12" fill="#1a0a0a" stroke="#ff6b6b" stroke-width="2"/>
+<text x="725" y="715" fill="#ff6b6b" font-size="14" font-weight="bold">⑬ 🚨 Alerts & Notifications</text>
+<text x="725" y="737" fill="#fff" font-size="11">Unknown fingerprint → Admin alert!</text>
+<text x="725" y="755" fill="#fff" font-size="11">Off-hours motion → Security alert!</text>
+<text x="725" y="765" fill="#666" font-size="9">Email / SMS / Push notification</text>
+
+<!-- ML Box -->
+<rect x="710" y="790" width="290" height="65" rx="12" fill="#0a0a20" stroke="#00d4ff" stroke-width="2"/>
+<text x="725" y="815" fill="#00d4ff" font-size="14" font-weight="bold">⑭ 🤖 ML Models</text>
+<text x="725" y="835" fill="#fff" font-size="11">Activity classify (91%) | Anomaly detect (95%)</text>
+<text x="725" y="848" fill="#666" font-size="9">Scikit-learn / TensorFlow / TFLite on ESP32</text>
+
+
+<!-- ====== LAYER LABELS at bottom ====== -->
+<rect x="40" y="845" width="300" height="18" rx="4" fill="rgba(0,212,255,.08)"/>
+<text x="190" y="858" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">SENSORS + HARDWARE</text>
+
+<rect x="400" y="660" width="230" height="18" rx="4" fill="rgba(0,212,255,.08)"/>
+<text x="515" y="673" text-anchor="middle" fill="#00d4ff" font-size="10" font-weight="bold">MICROCONTROLLER (BRAIN)</text>
+
+<rect x="710" y="860" width="290" height="18" rx="4" fill="rgba(106,203,119,.08)"/>
+<text x="855" y="873" text-anchor="middle" fill="#6bcb77" font-size="10" font-weight="bold">CLOUD + SOFTWARE + AI</text>
+
+</svg>
+</div>
+</div>
+
+<!-- ===== TIMELINE VIEW ===== -->
+<div class="sec">
+<h2>2. ⏱️ Timeline — সময় অনুযায়ী কি হয়?</h2>
+<div class="bx">
+<h3>Rahim Ahmed সকাল ৮:৪৫ এ Class এ ঢুকলে কি কি ঘটে:</h3>
+<div class="timeline">
+
+<div class="tl-item">
+<div class="tl-dot"></div>
+<div class="tl-time">08:45:00 — 0.0s</div>
+<div class="tl-title">👤 Rahim ঘরে ঢোকে</div>
+<div class="tl-desc">দরজা দিয়ে classroom এ প্রবেশ করে। এখনও কিছু touch করেনি।</div>
+<div class="tl-comp">কোনো component লাগে না — শুধু ব্যক্তি</div>
+</div>
+
+<div class="tl-item">
+<div class="tl-dot"></div>
+<div class="tl-time">08:45:00.1 — 0.1s</div>
+<div class="tl-title">🔴 PIR Sensor → "Motion Detected!"</div>
+<div class="tl-desc">শরীরের infrared heat detect করে। GPIO 27 → HIGH signal ESP32 কে পাঠায়।</div>
+<div class="tl-comp">📦 HC-SR501 PIR Sensor</div>
+</div>
+
+<div class="tl-item">
+<div class="tl-dot"></div>
+<div class="tl-time">08:45:00.2 — 0.2s</div>
+<div class="tl-title">📏 Ultrasonic → "Distance: 42cm — কাছে!"</div>
+<div class="tl-desc">Sound wave bounce করে distance মাপে। 42cm &lt; 50cm = কেউ sensor এর কাছে।</div>
+<div class="tl-comp">📦 HC-SR04 Ultrasonic Sensor</div>
+</div>
+
+<div class="tl-item">
+<div class="tl-dot"></div>
+<div class="tl-time">08:45:00.3 — 0.3s</div>
+<div class="tl-title">🖥️ OLED Display → "আঙুল দিন / Place finger"</div>
+<div class="tl-desc">ESP32 বুঝে গেছে কেউ কাছে এসেছে। Screen এ prompt দেখায়।</div>
+<div class="tl-comp">📦 SSD1306 OLED (128×64)</div>
+</div>
+
+<div class="tl-item">
+<div class="tl-dot"></div>
+<div class="tl-time">08:45:01.0 — 1.0s</div>
+<div class="tl-title">👆 Fingerprint Scan → ID #1, Confidence: 285/300</div>
+<div class="tl-desc">Rahim আঙুল sensor এ রাখে → image capture → template → internal DB search → MATCH!</div>
+<div class="tl-comp">📦 R307 Fingerprint Sensor (UART)</div>
+</div>
+
+<div class="tl-item">
+<div class="tl-dot"></div>
+<div class="tl-time">08:45:01.5 — 1.5s</div>
+<div class="tl-title">✅ Attendance Marked! + 📶 Data → Cloud</div>
+<div class="tl-desc">ESP32 user info fetch করে → JSON তৈরি → WiFi দিয়ে Firebase এ পাঠায়।<br>
+OLED: "Welcome Rahim!" | LED: 🟢 Green | Buzzer: Beep! 🔊</div>
+<div class="tl-comp">📦 ESP32 WiFi + 🔥 Firebase + 💡LED + 🔊Buzzer</div>
+</div>
+
+<div class="tl-item">
+<div class="tl-dot"></div>
+<div class="tl-time">08:45:02.0 — 2.0s ← সব শেষ!</div>
+<div class="tl-title">📊 Dashboard Update + 📱 App Sync</div>
+<div class="tl-desc">Admin dashboard এ real-time দেখাচ্ছে: "Rahim Ahmed — Present ✅ 8:45 AM"<br>
+Rahim এর phone এ notification: "Attendance marked!"</div>
+<div class="tl-comp">📦 React Dashboard + Flutter App</div>
+</div>
+
+</div>
+
+<div style="text-align:center;margin-top:18px;padding:14px;background:rgba(0,255,136,.05);border-radius:10px;border:1px solid #00ff88">
+<span style="color:#00ff88;font-size:1.1em;font-weight:700">⏱️ Total: মাত্র ২ সেকেন্ড! — Person ঢোকা থেকে Dashboard এ দেখা পর্যন্ত!</span>
+</div>
+</div>
+</div>
+
+<!-- ===== COMPONENT MAP ===== -->
+<div class="sec">
+<h2>3. 🧩 কোন Component কি কাজ করে — একনজরে</h2>
+<div class="bx">
+<svg width="100%" viewBox="0 0 950 460">
+<text x="475" y="25" text-anchor="middle" fill="#00d4ff" font-size="16" font-weight="bold">প্রতিটি Component এর ভূমিকা — Role Map</text>
+
+<!-- Sensing -->
+<rect x="10" y="50" width="290" height="390" rx="14" fill="#080818" stroke="#ff6b6b" stroke-width="2"/>
+<text x="155" y="78" text-anchor="middle" fill="#ff6b6b" font-size="14" font-weight="bold">📡 SENSING (তথ্য সংগ্রহ)</text>
+<text x="155" y="98" text-anchor="middle" fill="#666" font-size="10">"কি হচ্ছে?" — সেটা জানার জন্য</text>
+
+<rect x="25" y="115" width="260" height="50" rx="8" fill="#0f1020" stroke="#a855f7" stroke-width="1.5"/>
+<text x="35" y="137" fill="#a855f7" font-size="12" font-weight="bold">👆 Fingerprint (R307)</text>
+<text x="35" y="155" fill="#aaa" font-size="10">ভূমিকা: কে? → unique identification</text>
+
+<rect x="25" y="175" width="260" height="50" rx="8" fill="#0f1020" stroke="#ff6b6b" stroke-width="1.5"/>
+<text x="35" y="197" fill="#ff6b6b" font-size="12" font-weight="bold">🔴 PIR (HC-SR501)</text>
+<text x="35" y="215" fill="#aaa" font-size="10">ভূমিকা: কেউ আছে? → presence detect</text>
+
+<rect x="25" y="235" width="260" height="50" rx="8" fill="#0f1020" stroke="#38bdf8" stroke-width="1.5"/>
+<text x="35" y="257" fill="#38bdf8" font-size="12" font-weight="bold">📏 Ultrasonic (HC-SR04)</text>
+<text x="35" y="275" fill="#aaa" font-size="10">ভূমিকা: কতদূরে? → distance measure</text>
+
+<rect x="25" y="295" width="260" height="50" rx="8" fill="#0f1020" stroke="#fb923c" stroke-width="1.5"/>
+<text x="35" y="317" fill="#fb923c" font-size="12" font-weight="bold">🔄 Accelerometer (MPU6050)</text>
+<text x="35" y="335" fill="#aaa" font-size="10">ভূমিকা: কি করছে? → activity tracking</text>
+
+<rect x="25" y="355" width="260" height="50" rx="8" fill="#0f1020" stroke="#6bcb77" stroke-width="1.5"/>
+<text x="35" y="377" fill="#6bcb77" font-size="12" font-weight="bold">🚪 IR Beam Sensor</text>
+<text x="35" y="395" fill="#aaa" font-size="10">ভূমিকা: ঢুকলো/বের হলো? → entry/exit</text>
+
+<!-- Processing -->
+<rect x="330" y="50" width="290" height="200" rx="14" fill="#080818" stroke="#00d4ff" stroke-width="2"/>
+<text x="475" y="78" text-anchor="middle" fill="#00d4ff" font-size="14" font-weight="bold">⚙️ PROCESSING (সিদ্ধান্ত)</text>
+<text x="475" y="98" text-anchor="middle" fill="#666" font-size="10">"কি করতে হবে?" — সেটা ঠিক করে</text>
+
+<rect x="345" y="115" width="260" height="60" rx="8" fill="#0a1030" stroke="#00d4ff" stroke-width="2"/>
+<text x="355" y="137" fill="#00d4ff" font-size="13" font-weight="bold">🧠 ESP32 Microcontroller</text>
+<text x="355" y="155" fill="#aaa" font-size="10">সব sensor data receive + process</text>
+<text x="355" y="168" fill="#aaa" font-size="10">WiFi built-in! Cloud এ data পাঠায়</text>
+
+<rect x="345" y="185" width="260" height="50" rx="8" fill="#0f1020" stroke="#ffd93d" stroke-width="1.5"/>
+<text x="355" y="207" fill="#ffd93d" font-size="12" font-weight="bold">📶 WiFi Module (built-in ESP32)</text>
+<text x="355" y="225" fill="#aaa" font-size="10">ভূমিকা: data → internet → cloud</text>
+
+<!-- Output -->
+<rect x="330" y="270" width="290" height="170" rx="14" fill="#080818" stroke="#00ff88" stroke-width="2"/>
+<text x="475" y="298" text-anchor="middle" fill="#00ff88" font-size="14" font-weight="bold">💡 OUTPUT (ফলাফল দেখানো)</text>
+<text x="475" y="318" text-anchor="middle" fill="#666" font-size="10">"কি হয়েছে?" — user কে জানানো</text>
+
+<rect x="345" y="335" width="260" height="42" rx="8" fill="#0f1020" stroke="#ffd93d" stroke-width="1.5"/>
+<text x="355" y="357" fill="#ffd93d" font-size="12" font-weight="bold">🖥️ OLED — নাম, status দেখায়</text>
+<text x="355" y="371" fill="#aaa" font-size="10">128×64 pixel display</text>
+
+<rect x="345" y="385" width="125" height="42" rx="8" fill="#0f1020" stroke="#6bcb77" stroke-width="1.5"/>
+<text x="355" y="407" fill="#6bcb77" font-size="11" font-weight="bold">💡 LED</text>
+<text x="355" y="421" fill="#aaa" font-size="9">Green/Red</text>
+
+<rect x="480" y="385" width="125" height="42" rx="8" fill="#0f1020" stroke="#ff6b6b" stroke-width="1.5"/>
+<text x="490" y="407" fill="#ff6b6b" font-size="11" font-weight="bold">🔊 Buzzer</text>
+<text x="490" y="421" fill="#aaa" font-size="9">Beep sound</text>
+
+<!-- Cloud/Software -->
+<rect x="650" y="50" width="290" height="390" rx="14" fill="#080818" stroke="#6bcb77" stroke-width="2"/>
+<text x="795" y="78" text-anchor="middle" fill="#6bcb77" font-size="14" font-weight="bold">☁️ SOFTWARE (দেখা + রিপোর্ট)</text>
+<text x="795" y="98" text-anchor="middle" fill="#666" font-size="10">"সব data সংরক্ষণ + দেখানো"</text>
+
+<rect x="665" y="115" width="260" height="50" rx="8" fill="#0f1020" stroke="#ffd93d" stroke-width="1.5"/>
+<text x="675" y="137" fill="#ffd93d" font-size="12" font-weight="bold">🔥 Firebase Cloud Database</text>
+<text x="675" y="155" fill="#aaa" font-size="10">ভূমিকা: সব data store + sync</text>
+
+<rect x="665" y="175" width="260" height="50" rx="8" fill="#0f1020" stroke="#00ff88" stroke-width="1.5"/>
+<text x="675" y="197" fill="#00ff88" font-size="12" font-weight="bold">🖥️ Web Dashboard</text>
+<text x="675" y="215" fill="#aaa" font-size="10">ভূমিকা: Admin attendance দেখে</text>
+
+<rect x="665" y="235" width="260" height="50" rx="8" fill="#0f1020" stroke="#a855f7" stroke-width="1.5"/>
+<text x="675" y="257" fill="#a855f7" font-size="12" font-weight="bold">📱 Mobile App</text>
+<text x="675" y="275" fill="#aaa" font-size="10">ভূমিকা: Student নিজের record দেখে</text>
+
+<rect x="665" y="295" width="260" height="50" rx="8" fill="#0f1020" stroke="#ff9f43" stroke-width="1.5"/>
+<text x="675" y="317" fill="#ff9f43" font-size="12" font-weight="bold">📊 Reports & Analytics</text>
+<text x="675" y="335" fill="#aaa" font-size="10">ভূমিকা: chart, CSV, behaviour analysis</text>
+
+<rect x="665" y="355" width="260" height="50" rx="8" fill="#0f1020" stroke="#00d4ff" stroke-width="1.5"/>
+<text x="675" y="377" fill="#00d4ff" font-size="12" font-weight="bold">🤖 ML Models</text>
+<text x="675" y="395" fill="#aaa" font-size="10">ভূমিকা: activity classify + anomaly detect</text>
+
+<!-- Flow arrows -->
+<text x="312" y="170" fill="#ff6b6b" font-size="20" font-weight="900">→</text>
+<text x="632" y="170" fill="#00ff88" font-size="20" font-weight="900">→</text>
+
+<!-- Bottom summary -->
+<rect x="150" y="445" width="650" height="18" rx="4" fill="rgba(0,255,136,.06)"/>
+<text x="475" y="458" text-anchor="middle" fill="#00ff88" font-size="11" font-weight="bold">SENSORS collect → ESP32 processes → CLOUD stores → DASHBOARD shows</text>
+</svg>
+</div>
+</div>
+
+<!-- ===== SIMPLIFIED SENTENCE ===== -->
+<div class="sec">
+<h2>4. 📝 একটি বাক্যে পুরো System</h2>
+<div class="simple-box" style="border-color:#00d4ff">
+<h3 style="color:#00d4ff">🎯 Professor কে বলুন:</h3>
+<p style="font-size:1.05em;color:#90d4ff">
+"PIR sensor যখন motion detect করে, তখন system activate হয়। Fingerprint sensor দিয়ে user uniquely identify হয়। ESP32 সব sensor data process করে WiFi দিয়ে Firebase cloud এ পাঠায়। Admin web dashboard এ real-time attendance দেখতে পায়, এবং ML model দিয়ে activity tracking ও anomaly detection হয়।"
+</p>
+</div>
+</div>
+
+<div style="text-align:center;padding:25px;color:#444;font-size:.82em">
+Complete System Flow — Sensor-Based Attendance & Activity Tracking System<br>
+All 14 components in a single unified flow
+</div>
+</body>
+</html>

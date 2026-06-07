@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Pipeline — Data & Model Training Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0a0a14; color: #e0e0e0; line-height: 1.6; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 35px 20px; text-align: center; border-bottom: 3px solid #a855f7; }
+  .header h1 { font-size: 1.9em; color: #a855f7; margin-bottom: 8px; }
+  .header p { color: #aaa; max-width: 700px; margin: 0 auto; }
+
+  .section { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+  .section h2 { font-size: 1.4em; color: #00d4ff; margin-bottom: 15px; border-bottom: 2px solid #1a3a5c; padding-bottom: 8px; }
+
+  .box { background: #141425; border: 1px solid #2a2a4a; border-radius: 14px; padding: 25px; margin-bottom: 20px; }
+  .box h3 { color: #ff9f43; margin-bottom: 15px; text-align: center; font-size: 1.2em; }
+
+  .pipeline-flow {
+    display: flex; gap: 12px; align-items: stretch; flex-wrap: wrap; justify-content: center;
+  }
+  .pipeline-step {
+    flex: 1; min-width: 200px; max-width: 250px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid #2a2a4a; border-radius: 14px; padding: 20px; text-align: center;
+    position: relative;
+  }
+  .pipeline-step.active { border-color: #00ff88; }
+  .pipeline-step .num { background: linear-gradient(135deg,#0f3460,#00d4ff); width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: bold; margin: 0 auto 10px; }
+  .pipeline-step h4 { color: #00d4ff; margin-bottom: 6px; }
+  .pipeline-step p { color: #aaa; font-size: 0.85em; }
+  .arrow-right { display: flex; align-items: center; color: #00d4ff; font-size: 1.5em; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+  @media (max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  .stat-card { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 10px; padding: 18px; text-align: center; }
+  .stat-card .value { font-size: 2em; font-weight: bold; margin: 5px 0; }
+  .stat-card .label { color: #888; font-size: 0.85em; }
+
+  .model-card { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 14px; padding: 22px; border: 1px solid #2a2a4a; }
+  .model-card h4 { margin-bottom: 10px; }
+  .model-card .accuracy { font-size: 2.2em; font-weight: bold; text-align: center; margin: 10px 0; }
+
+  .bar { height: 24px; border-radius: 12px; background: #1a1a3e; position: relative; overflow: hidden; margin: 8px 0; }
+  .bar-fill { height: 100%; border-radius: 12px; display: flex; align-items: center; padding-left: 10px; font-size: 0.8em; color: #fff; font-weight: bold; }
+
+  table.data-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
+  table.data-table th, table.data-table td { padding: 10px 12px; border-bottom: 1px solid #1a1a3a; text-align: left; }
+  table.data-table th { background: #1a1a3e; color: #00d4ff; }
+  table.data-table tr:hover { background: rgba(0,212,255,0.03); }
+
+  .code-inline { background: #1a1a3e; color: #00ff88; padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.78em; font-weight: bold; }
+  .badge-green { background: rgba(0,255,136,0.15); color: #00ff88; }
+  .badge-blue { background: rgba(0,212,255,0.15); color: #00d4ff; }
+  .badge-yellow { background: rgba(255,217,61,0.15); color: #ffd93d; }
+  .badge-red { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+  .badge-purple { background: rgba(168,85,247,0.15); color: #a855f7; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🤖 ML Pipeline — Data & Model Training Dashboard</h1>
+  <p>Sensor-Based Attendance System — Complete Machine Learning Workflow Visualization</p>
+</div>
+
+<!-- ===== PIPELINE OVERVIEW ===== -->
+<div class="section">
+  <h2>1. 🔄 ML Pipeline Overview</h2>
+  <div class="box">
+    <div class="pipeline-flow">
+      <div class="pipeline-step active">
+        <div class="num">1</div>
+        <h4>📊 Data Generation</h4>
+        <p>Synthetic sensor data তৈরি — PIR, RFID, Ultrasonic, Accelerometer</p>
+        <span class="badge badge-green">step1_generate_data.py</span>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="pipeline-step active">
+        <div class="num">2</div>
+        <h4>🔧 Preprocessing</h4>
+        <p>Feature extraction, normalization, train/test split</p>
+        <span class="badge badge-blue">Built into step2</span>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="pipeline-step active">
+        <div class="num">3</div>
+        <h4>🤖 Model Training</h4>
+        <p>KNN, Anomaly Detector, Decision Tree train করা</p>
+        <span class="badge badge-yellow">step2_train_models.py</span>
+      </div>
+      <div class="arrow-right">→</div>
+      <div class="pipeline-step active">
+        <div class="num">4</div>
+        <h4>🔮 Prediction</h4>
+        <p>নতুন data দিয়ে prediction করা</p>
+        <span class="badge badge-purple">step3_predict.py</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DATA OVERVIEW ===== -->
+<div class="section">
+  <h2>2. 📊 Generated Data Summary</h2>
+  <div class="grid-3">
+    <div class="stat-card">
+      <div class="label">Attendance Records</div>
+      <div class="value" style="color:#00d4ff;">215</div>
+      <div class="label">30 days × 10 users + anomalies</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Sensor Readings</div>
+      <div class="value" style="color:#6bcb77;">3,780</div>
+      <div class="label">Every 5 min, 7 AM – 10 PM</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">Registered Users</div>
+      <div class="value" style="color:#ffd93d;">10</div>
+      <div class="label">CSE, EEE, BBA departments</div>
+    </div>
+  </div>
+
+  <div class="box" style="margin-top:20px;">
+    <h3>📋 Data Distribution</h3>
+    <svg width="100%" viewBox="0 0 700 280">
+      <!-- Attendance Distribution -->
+      <text x="10" y="25" fill="#00d4ff" font-size="14" font-weight="bold">Attendance Status</text>
+      
+      <text x="10" y="55" fill="#aaa" font-size="12">Present (186)</text>
+      <rect x="130" y="40" width="460" height="22" rx="11" fill="#1a1a3e"/>
+      <rect x="130" y="40" width="398" height="22" rx="11" fill="#00ff88"/>
+      <text x="135" y="56" fill="#000" font-size="11" font-weight="bold">86.5%</text>
+
+      <text x="10" y="85" fill="#aaa" font-size="12">Absent (24)</text>
+      <rect x="130" y="70" width="460" height="22" rx="11" fill="#1a1a3e"/>
+      <rect x="130" y="70" width="51" height="22" rx="11" fill="#ff6b6b"/>
+      <text x="135" y="86" fill="#fff" font-size="11" font-weight="bold">11.2%</text>
+
+      <text x="10" y="115" fill="#aaa" font-size="12">Unauthorized (5)</text>
+      <rect x="130" y="100" width="460" height="22" rx="11" fill="#1a1a3e"/>
+      <rect x="130" y="100" width="11" height="22" rx="5" fill="#ffd93d"/>
+      <text x="145" y="116" fill="#ffd93d" font-size="11" font-weight="bold">2.3%</text>
+
+      <!-- Sensor Data Distribution -->
+      <text x="10" y="160" fill="#a855f7" font-size="14" font-weight="bold">Activity Labels (Sensor Data)</text>
+
+      <text x="10" y="190" fill="#aaa" font-size="12">Idle</text>
+      <rect x="130" y="175" width="460" height="22" rx="11" fill="#1a1a3e"/>
+      <rect x="130" y="175" width="370" height="22" rx="11" fill="#38bdf8"/>
+      <text x="135" y="191" fill="#000" font-size="11" font-weight="bold">~80% (majority class)</text>
+
+      <text x="10" y="220" fill="#aaa" font-size="12">Walking</text>
+      <rect x="130" y="205" width="460" height="22" rx="11" fill="#1a1a3e"/>
+      <rect x="130" y="205" width="37" height="22" rx="11" fill="#6bcb77"/>
+      <text x="172" y="221" fill="#6bcb77" font-size="11" font-weight="bold">~8%</text>
+
+      <text x="10" y="250" fill="#aaa" font-size="12">Others</text>
+      <rect x="130" y="235" width="460" height="22" rx="11" fill="#1a1a3e"/>
+      <rect x="130" y="235" width="55" height="22" rx="11" fill="#ff9f43"/>
+      <text x="190" y="251" fill="#ff9f43" font-size="11" font-weight="bold">~12% (sitting, standing, running)</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ===== DATA STRUCTURE ===== -->
+<div class="section">
+  <h2>3. 🗃️ Data Structure — কি কি Data Generate হয়েছে</h2>
+  <div class="grid-2">
+    <div class="box">
+      <h3>📄 attendance_records.csv</h3>
+      <table class="data-table">
+        <tr><th>Column</th><th>Type</th><th>Example</th></tr>
+        <tr><td>date</td><td>Date</td><td>2026-01-05</td></tr>
+        <tr><td>user_uid</td><td>String</td><td>A1B2C3D4</td></tr>
+        <tr><td>user_name</td><td>String</td><td>Rahim Ahmed</td></tr>
+        <tr><td>user_id</td><td>String</td><td>STU-001</td></tr>
+        <tr><td>department</td><td>String</td><td>CSE</td></tr>
+        <tr><td>entry_time</td><td>Time</td><td>08:23:45</td></tr>
+        <tr><td>exit_time</td><td>Time</td><td>16:30:12</td></tr>
+        <tr><td>duration_hours</td><td>Float</td><td>8.11</td></tr>
+        <tr><td>is_late</td><td>0/1</td><td>0</td></tr>
+        <tr><td>is_early_leave</td><td>0/1</td><td>0</td></tr>
+        <tr><td>status</td><td>Label</td><td>present</td></tr>
+        <tr><td>entry_method</td><td>String</td><td>RFID</td></tr>
+      </table>
+    </div>
+    <div class="box">
+      <h3>📄 sensor_readings.csv</h3>
+      <table class="data-table">
+        <tr><th>Column</th><th>Type</th><th>Example</th></tr>
+        <tr><td>timestamp</td><td>DateTime</td><td>2026-01-05 09:15:00</td></tr>
+        <tr><td>zone</td><td>String</td><td>classroom_A</td></tr>
+        <tr><td>pir_motion</td><td>0/1</td><td>1</td></tr>
+        <tr><td>ultrasonic_cm</td><td>Float</td><td>42.5</td></tr>
+        <tr><td>accel_x</td><td>Float</td><td>1.234</td></tr>
+        <tr><td>accel_y</td><td>Float</td><td>0.567</td></tr>
+        <tr><td>accel_z</td><td>Float</td><td>10.1</td></tr>
+        <tr><td>ir_entry</td><td>0/1</td><td>1</td></tr>
+        <tr><td>ir_exit</td><td>0/1</td><td>0</td></tr>
+        <tr><td>activity_label</td><td>Label</td><td>walking</td></tr>
+        <tr><td>is_office_hours</td><td>0/1</td><td>1</td></tr>
+        <tr><td>is_anomaly</td><td>0/1</td><td>0</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODEL DETAILS ===== -->
+<div class="section">
+  <h2>4. 🤖 Trained Models — Details & Results</h2>
+  <div class="grid-3">
+    <!-- Model 1 -->
+    <div class="model-card" style="border-color: #6bcb77;">
+      <h4 style="color:#6bcb77;">🏃 Model 1: Activity Classifier</h4>
+      <div class="accuracy" style="color:#6bcb77;">84.5%</div>
+      <p style="color:#aaa; text-align:center; font-size:0.9em;">Accuracy</p>
+      <table class="data-table" style="margin-top:10px;">
+        <tr><td>Algorithm</td><td><span class="badge badge-green">K-Nearest Neighbors</span></td></tr>
+        <tr><td>K value</td><td>5</td></tr>
+        <tr><td>Features</td><td>accel_x, y, z, PIR, distance</td></tr>
+        <tr><td>Classes</td><td>idle, walking, sitting, standing, running</td></tr>
+        <tr><td>Training</td><td>3,024 samples</td></tr>
+        <tr><td>Test</td><td>756 samples</td></tr>
+      </table>
+    </div>
+
+    <!-- Model 2 -->
+    <div class="model-card" style="border-color: #ff6b6b;">
+      <h4 style="color:#ff6b6b;">🔍 Model 2: Anomaly Detector</h4>
+      <div class="accuracy" style="color:#ff6b6b;">90.8%</div>
+      <p style="color:#aaa; text-align:center; font-size:0.9em;">Accuracy</p>
+      <table class="data-table" style="margin-top:10px;">
+        <tr><td>Algorithm</td><td><span class="badge badge-red">Z-Score Method</span></td></tr>
+        <tr><td>Threshold</td><td>1.8σ</td></tr>
+        <tr><td>Features</td><td>hour, PIR, dist, IR, office_hours</td></tr>
+        <tr><td>Classes</td><td>Normal (0) vs Anomaly (1)</td></tr>
+        <tr><td>Normal</td><td>3,707 samples</td></tr>
+        <tr><td>Anomaly</td><td>73 samples</td></tr>
+      </table>
+    </div>
+
+    <!-- Model 3 -->
+    <div class="model-card" style="border-color: #00d4ff;">
+      <h4 style="color:#00d4ff;">📅 Model 3: Attendance Predictor</h4>
+      <div class="accuracy" style="color:#00d4ff;">90.5%</div>
+      <p style="color:#aaa; text-align:center; font-size:0.9em;">Accuracy</p>
+      <table class="data-table" style="margin-top:10px;">
+        <tr><td>Algorithm</td><td><span class="badge badge-blue">Decision Tree</span></td></tr>
+        <tr><td>Max Depth</td><td>4</td></tr>
+        <tr><td>Features</td><td>day, dept, att_rate, late_rate, month</td></tr>
+        <tr><td>Classes</td><td>Absent (0) vs Present (1)</td></tr>
+        <tr><td>Training</td><td>168 samples</td></tr>
+        <tr><td>Test</td><td>42 samples</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== HOW EACH MODEL WORKS ===== -->
+<div class="section">
+  <h2>5. 📖 কিভাবে প্রতিটি Model কাজ করে — সহজ ব্যাখ্যা</h2>
+
+  <!-- KNN -->
+  <div class="box">
+    <h3 style="color:#6bcb77;">🏃 KNN (K-Nearest Neighbors) — Activity Classification</h3>
+    <svg width="100%" viewBox="0 0 750 320">
+      <text x="375" y="25" text-anchor="middle" fill="#6bcb77" font-size="15" font-weight="bold">KNN কিভাবে কাজ করে?</text>
+      
+      <!-- Input -->
+      <rect x="20" y="50" width="180" height="120" rx="10" fill="#1b2838" stroke="#ff6b6b" stroke-width="2"/>
+      <text x="110" y="75" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="bold">📡 New Sensor Data</text>
+      <text x="110" y="100" text-anchor="middle" fill="#aaa" font-size="10">accel = (1.5, 0.8, 10.2)</text>
+      <text x="110" y="118" text-anchor="middle" fill="#aaa" font-size="10">PIR = 1, Distance = 50cm</text>
+      <text x="110" y="140" text-anchor="middle" fill="#ffd93d" font-size="10">কি activity চলছে? 🤔</text>
+
+      <!-- Arrow -->
+      <line x1="200" y1="110" x2="240" y2="110" stroke="#6bcb77" stroke-width="2"/>
+      <polygon points="235,104 245,110 235,116" fill="#6bcb77"/>
+
+      <!-- KNN Process -->
+      <rect x="245" y="40" width="250" height="140" rx="12" fill="#0f3460" stroke="#6bcb77" stroke-width="2"/>
+      <text x="370" y="65" text-anchor="middle" fill="#6bcb77" font-size="13" font-weight="bold">🔄 KNN Algorithm (K=5)</text>
+      <text x="370" y="90" text-anchor="middle" fill="#fff" font-size="10">1. Training data থেকে 5টি</text>
+      <text x="370" y="108" text-anchor="middle" fill="#fff" font-size="10">   সবচেয়ে কাছের neighbor বের করে</text>
+      <text x="370" y="128" text-anchor="middle" fill="#fff" font-size="10">2. ৫টি neighbor এর মধ্যে</text>
+      <text x="370" y="148" text-anchor="middle" fill="#fff" font-size="10">   সবচেয়ে বেশি যেটা = সেটাই answer!</text>
+      <text x="370" y="170" text-anchor="middle" fill="#6bcb77" font-size="10" font-weight="bold">Distance = √(Σ(xi-yi)²)</text>
+
+      <!-- Arrow -->
+      <line x1="495" y1="110" x2="540" y2="110" stroke="#6bcb77" stroke-width="2"/>
+      <polygon points="535,104 545,110 535,116" fill="#6bcb77"/>
+
+      <!-- Output -->
+      <rect x="545" y="60" width="180" height="100" rx="10" fill="#1b2838" stroke="#00ff88" stroke-width="2"/>
+      <text x="635" y="90" text-anchor="middle" fill="#00ff88" font-size="14" font-weight="bold">🎯 Result:</text>
+      <text x="635" y="115" text-anchor="middle" fill="#fff" font-size="16" font-weight="bold">WALKING 🚶</text>
+      <text x="635" y="140" text-anchor="middle" fill="#aaa" font-size="10">5 neighbor: 3 walking, 1 idle, 1 sit</text>
+
+      <!-- Example visual -->
+      <text x="375" y="210" text-anchor="middle" fill="#ffd93d" font-size="13" font-weight="bold">📊 উদাহরণ: 2D তে KNN কিভাবে কাজ করে</text>
+      
+      <!-- Scatter plot simulation -->
+      <rect x="130" y="225" width="490" height="85" rx="8" fill="#0a0a1a" stroke="#2a2a4a" stroke-width="1"/>
+      <!-- Walking points (green) -->
+      <circle cx="200" cy="260" r="5" fill="#6bcb77"/><circle cx="220" cy="250" r="5" fill="#6bcb77"/>
+      <circle cx="190" cy="275" r="5" fill="#6bcb77"/><circle cx="230" cy="265" r="5" fill="#6bcb77"/>
+      <!-- Idle points (blue) -->
+      <circle cx="400" cy="280" r="5" fill="#38bdf8"/><circle cx="420" cy="270" r="5" fill="#38bdf8"/>
+      <circle cx="380" cy="290" r="5" fill="#38bdf8"/><circle cx="440" cy="285" r="5" fill="#38bdf8"/>
+      <circle cx="410" cy="250" r="5" fill="#38bdf8"/>
+      <!-- Sitting points (yellow) -->
+      <circle cx="520" cy="260" r="5" fill="#ffd93d"/><circle cx="540" cy="275" r="5" fill="#ffd93d"/>
+      <circle cx="530" cy="245" r="5" fill="#ffd93d"/>
+      <!-- New point (red star) -->
+      <text x="210" y="258" fill="#ff6b6b" font-size="18" font-weight="bold">★</text>
+      <!-- Circle around new point -->
+      <circle cx="215" cy="255" r="30" fill="none" stroke="#ff6b6b" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="255" cy="245" fill="#ff6b6b" font-size="9">← New data point</text>
+      
+      <!-- Legend -->
+      <circle cx="170" cy="300" r="4" fill="#6bcb77"/><text x="180" y="304" fill="#aaa" font-size="9">Walking</text>
+      <circle cx="250" cy="300" r="4" fill="#38bdf8"/><text x="260" y="304" fill="#aaa" font-size="9">Idle</text>
+      <circle cx="310" cy="300" r="4" fill="#ffd93d"/><text x="320" y="304" fill="#aaa" font-size="9">Sitting</text>
+      <text x="378" y="304" fill="#ff6b6b" font-size="12">★</text><text x="390" y="304" fill="#aaa" font-size="9">New point (3/5 neighbors = walking → WALKING!)</text>
+    </svg>
+  </div>
+
+  <!-- Anomaly Detection -->
+  <div class="box">
+    <h3 style="color:#ff6b6b;">🔍 Z-Score Anomaly Detection — কিভাবে কাজ করে?</h3>
+    <svg width="100%" viewBox="0 0 750 200">
+      <text x="375" y="25" text-anchor="middle" fill="#ff6b6b" font-size="14" font-weight="bold">Z-Score = (value - mean) / std_deviation → Z > 1.8 means ANOMALY!</text>
+
+      <!-- Normal distribution curve (simplified) -->
+      <rect x="50" y="40" width="650" height="140" rx="10" fill="#0a0a1a" stroke="#2a2a4a" stroke-width="1"/>
+      
+      <!-- Bell curve approximation -->
+      <path d="M 100,170 Q 150,165 200,150 Q 250,120 300,80 Q 350,50 375,45 Q 400,50 450,80 Q 500,120 550,150 Q 600,165 650,170" fill="none" stroke="#38bdf8" stroke-width="2"/>
+      
+      <!-- Fill normal zone -->
+      <path d="M 200,150 Q 250,120 300,80 Q 350,50 375,45 Q 400,50 450,80 Q 500,120 550,150 Z" fill="rgba(56,189,248,0.1)"/>
+      
+      <!-- Anomaly zones -->
+      <rect x="100" y="45" width="100" height="125" fill="rgba(255,107,107,0.1)" rx="5"/>
+      <rect x="550" y="45" width="100" height="125" fill="rgba(255,107,107,0.1)" rx="5"/>
+      
+      <!-- Labels -->
+      <text x="375" y="100" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">✅ Normal Zone</text>
+      <text x="375" y="116" text-anchor="middle" fill="#aaa" font-size="10">(Z-score &lt; 1.8)</text>
+      <text x="150" y="90" text-anchor="middle" fill="#ff6b6b" font-size="11" font-weight="bold">🚨 Anomaly</text>
+      <text x="150" y="106" text-anchor="middle" fill="#ff6b6b" font-size="9">(Z &gt; 1.8)</text>
+      <text x="600" y="90" text-anchor="middle" fill="#ff6b6b" font-size="11" font-weight="bold">🚨 Anomaly</text>
+      <text x="600" y="106" text-anchor="middle" fill="#ff6b6b" font-size="9">(Z &gt; 1.8)</text>
+
+      <!-- Example -->
+      <text x="375" y="140" text-anchor="middle" fill="#ffd93d" font-size="10">Example: কেউ রাত 2 টায় lab এ ঢুকলে → hour Z-score = 3.5 → 🚨 ANOMALY!</text>
+      
+      <!-- Mean line -->
+      <line x1="375" y1="45" x2="375" y2="170" stroke="#ffd93d" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="375" y="180" text-anchor="middle" fill="#ffd93d" font-size="9">Mean (μ)</text>
+    </svg>
+  </div>
+
+  <!-- Decision Tree -->
+  <div class="box">
+    <h3 style="color:#00d4ff;">📅 Decision Tree — Attendance Prediction কিভাবে কাজ করে?</h3>
+    <svg width="100%" viewBox="0 0 750 340">
+      <!-- Root -->
+      <rect x="280" y="10" width="190" height="40" rx="8" fill="#0f3460" stroke="#00d4ff" stroke-width="2"/>
+      <text x="375" y="35" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">attendance_rate > 0.7?</text>
+
+      <!-- Left branch (Yes) -->
+      <line x1="325" y1="50" x2="200" y2="80" stroke="#6bcb77" stroke-width="2"/>
+      <text x="250" y="65" fill="#6bcb77" font-size="10" font-weight="bold">Yes ✓</text>
+      
+      <rect x="105" y="80" width="190" height="40" rx="8" fill="#1b2838" stroke="#6bcb77" stroke-width="1.5"/>
+      <text x="200" y="105" text-anchor="middle" fill="#fff" font-size="11">late_rate &lt; 0.3?</text>
+
+      <!-- Left-Left (Yes-Yes) -->
+      <line x1="155" y1="120" x2="90" y2="155" stroke="#6bcb77" stroke-width="1.5"/>
+      <text x="110" y="140" fill="#6bcb77" font-size="9">Yes</text>
+      <rect x="30" y="155" width="120" height="35" rx="8" fill="rgba(0,255,136,0.15)" stroke="#00ff88" stroke-width="2"/>
+      <text x="90" y="177" text-anchor="middle" fill="#00ff88" font-size="12" font-weight="bold">✅ PRESENT</text>
+      <text x="90" y="200" text-anchor="middle" fill="#aaa" font-size="9">Confidence: 92%</text>
+
+      <!-- Left-Right (Yes-No) -->
+      <line x1="245" y1="120" x2="290" y2="155" stroke="#ff6b6b" stroke-width="1.5"/>
+      <text x="275" y="140" fill="#ff6b6b" font-size="9">No</text>
+      <rect x="240" y="155" width="120" height="35" rx="8" fill="rgba(0,255,136,0.1)" stroke="#6bcb77" stroke-width="1.5"/>
+      <text x="300" y="177" text-anchor="middle" fill="#6bcb77" font-size="11" font-weight="bold">✅ PRESENT</text>
+      <text x="300" y="200" text-anchor="middle" fill="#aaa" font-size="9">Confidence: 75%</text>
+
+      <!-- Right branch (No) -->
+      <line x1="425" y1="50" x2="550" y2="80" stroke="#ff6b6b" stroke-width="2"/>
+      <text x="500" y="65" fill="#ff6b6b" font-size="10" font-weight="bold">No ✗</text>
+      
+      <rect x="455" y="80" width="190" height="40" rx="8" fill="#1b2838" stroke="#ff6b6b" stroke-width="1.5"/>
+      <text x="550" y="105" text-anchor="middle" fill="#fff" font-size="11">day_of_week == Mon?</text>
+
+      <!-- Right-Left (No-Yes) -->
+      <line x1="505" y1="120" x2="460" y2="155" stroke="#6bcb77" stroke-width="1.5"/>
+      <text x="475" y="140" fill="#6bcb77" font-size="9">Yes</text>
+      <rect x="400" y="155" width="120" height="35" rx="8" fill="rgba(255,217,61,0.15)" stroke="#ffd93d" stroke-width="1.5"/>
+      <text x="460" y="177" text-anchor="middle" fill="#ffd93d" font-size="11" font-weight="bold">🤔 MAYBE</text>
+      <text x="460" y="200" text-anchor="middle" fill="#aaa" font-size="9">Confidence: 55%</text>
+
+      <!-- Right-Right (No-No) -->
+      <line x1="595" y1="120" x2="630" y2="155" stroke="#ff6b6b" stroke-width="1.5"/>
+      <text x="620" y="140" fill="#ff6b6b" font-size="9">No</text>
+      <rect x="580" y="155" width="120" height="35" rx="8" fill="rgba(255,107,107,0.15)" stroke="#ff6b6b" stroke-width="2"/>
+      <text x="640" y="177" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="bold">❌ ABSENT</text>
+      <text x="640" y="200" text-anchor="middle" fill="#aaa" font-size="9">Confidence: 80%</text>
+
+      <!-- Explanation -->
+      <rect x="100" y="230" width="550" height="100" rx="10" fill="rgba(0,212,255,0.05)" stroke="#1a3a5c" stroke-width="1"/>
+      <text x="375" y="255" text-anchor="middle" fill="#00d4ff" font-size="13" font-weight="bold">📖 সহজ ভাষায়:</text>
+      <text x="375" y="278" text-anchor="middle" fill="#bbb" font-size="11">Tree প্রতিটি feature দিয়ে "হ্যাঁ/না" question করে</text>
+      <text x="375" y="298" text-anchor="middle" fill="#bbb" font-size="11">প্রথমে attendance_rate চেক → তারপর late_rate → তারপর day_of_week</text>
+      <text x="375" y="318" text-anchor="middle" fill="#bbb" font-size="11">Leaf node এ পৌঁছলে prediction পাওয়া যায়! 🎯</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ===== HOW TO RUN ===== -->
+<div class="section">
+  <h2>6. 🚀 কিভাবে Run করবেন</h2>
+  <div class="box">
+    <table class="data-table">
+      <tr>
+        <th>Step</th><th>Command</th><th>কি করে?</th><th>Output</th>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">Step 1</span></td>
+        <td><span class="code-inline">python3 step1_generate_data.py</span></td>
+        <td>Synthetic sensor data তৈরি করে</td>
+        <td>data/ ফোল্ডারে CSV files</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">Step 2</span></td>
+        <td><span class="code-inline">python3 step2_train_models.py</span></td>
+        <td>3টি ML model train করে</td>
+        <td>models/ ফোল্ডারে .pkl + .json</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-purple">Step 3</span></td>
+        <td><span class="code-inline">python3 step3_predict.py</span></td>
+        <td>নতুন data দিয়ে prediction করে</td>
+        <td>Console এ prediction results</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== FILES GENERATED ===== -->
+<div class="section">
+  <h2>7. 📁 Project File Structure</h2>
+  <div class="box">
+    <pre style="color:#bbb; font-family: monospace; font-size: 0.9em; line-height: 1.8;">
+attendance-ml/
+├── <span style="color:#00d4ff;">step1_generate_data.py</span>    ← Data generation script
+├── <span style="color:#6bcb77;">step2_train_models.py</span>     ← Model training script
+├── <span style="color:#a855f7;">step3_predict.py</span>          ← Prediction script
+├── <span style="color:#ff9f43;">step4_visualize.html</span>      ← This dashboard! 📊
+│
+├── 📂 data/
+│   ├── <span style="color:#ffd93d;">attendance_records.csv</span> ← 215 attendance records
+│   ├── <span style="color:#ffd93d;">sensor_readings.csv</span>    ← 3,780 sensor readings
+│   └── <span style="color:#ffd93d;">registered_users.csv</span>   ← 10 registered users
+│
+└── 📂 models/
+    ├── <span style="color:#6bcb77;">knn_activity.pkl</span>       ← Activity classifier (KNN)
+    ├── <span style="color:#ff6b6b;">anomaly_detector.pkl</span>   ← Anomaly detector (Z-Score)
+    ├── <span style="color:#00d4ff;">decision_tree.pkl</span>      ← Attendance predictor (DT)
+    └── <span style="color:#a855f7;">model_info.json</span>        ← Model metadata + configs
+    </pre>
+  </div>
+</div>
+
+<div style="text-align:center; padding:30px; color:#555; font-size:0.85em;">
+  ML Pipeline Dashboard — Sensor-Based Attendance System<br>
+  3 Models Trained: KNN (84.5%) | Anomaly Detection (90.8%) | Decision Tree (90.5%)
+</div>
+
+</body>
+</html>

@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hardware Simulation Guide — No Physical Components Needed!</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f0f1a; color: #e0e0e0; line-height: 1.7; }
+  
+  .header { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); padding: 40px 20px; text-align: center; border-bottom: 3px solid #00ff88; }
+  .header h1 { font-size: 2em; color: #00ff88; margin-bottom: 10px; }
+  .header p { font-size: 1.1em; color: #aaa; max-width: 800px; margin: 0 auto; }
+  
+  .section { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+  .section h2 { font-size: 1.5em; color: #00d4ff; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #1a3a5c; }
+  
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+  }
+  
+  .sim-card {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid #2a2a4a;
+    border-radius: 16px;
+    padding: 25px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .sim-card:hover { border-color: #00d4ff; transform: translateY(-3px); }
+  .sim-card.recommended { border-color: #00ff88; }
+  .sim-card.recommended::before {
+    content: "⭐ BEST FOR YOUR PROJECT";
+    position: absolute; top: 0; right: 0;
+    background: #00ff88; color: #000;
+    padding: 4px 14px; font-size: 11px; font-weight: bold;
+    border-radius: 0 14px 0 10px;
+  }
+  .sim-card h3 { font-size: 1.3em; margin-bottom: 10px; }
+  .sim-card .price { display: inline-block; background: rgba(0,255,136,0.15); color: #00ff88; padding: 3px 12px; border-radius: 20px; font-size: 0.85em; margin-bottom: 10px; }
+  .sim-card p { color: #aaa; font-size: 0.95em; margin-bottom: 10px; }
+  .sim-card ul { list-style: none; padding: 0; }
+  .sim-card ul li { padding: 4px 0; color: #bbb; font-size: 0.9em; }
+  .sim-card ul li::before { content: "✔ "; color: #00ff88; }
+  .sim-card ul li.con::before { content: "✘ "; color: #ff6b6b; }
+  .sim-card .link { display: inline-block; margin-top: 12px; background: #0f3460; color: #00d4ff; padding: 8px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; border: 1px solid #00d4ff; }
+  .sim-card .link:hover { background: #00d4ff; color: #000; }
+
+  .comparison-table {
+    width: 100%; border-collapse: collapse; margin-top: 15px;
+    background: #141425; border-radius: 12px; overflow: hidden;
+  }
+  .comparison-table th, .comparison-table td {
+    padding: 12px 16px; text-align: center; border-bottom: 1px solid #2a2a4a;
+  }
+  .comparison-table th { background: #1a1a3e; color: #00d4ff; font-size: 0.95em; }
+  .comparison-table td { color: #bbb; font-size: 0.9em; }
+  .yes { color: #00ff88; font-weight: bold; }
+  .no { color: #ff6b6b; }
+  .partial { color: #ffd93d; }
+
+  .step-container {
+    background: #141425;
+    border: 1px solid #2a2a4a;
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 15px;
+  }
+  .step {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #1a1a3a;
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    min-width: 45px; height: 45px;
+    background: linear-gradient(135deg, #0f3460, #00d4ff);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: bold; font-size: 1.2em;
+  }
+  .step-content h4 { color: #00d4ff; margin-bottom: 4px; }
+  .step-content p { color: #aaa; font-size: 0.95em; }
+  .step-content code {
+    background: #1a1a3e; color: #00ff88;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.9em;
+  }
+
+  .code-block {
+    background: #0a0a1a;
+    border: 1px solid #2a2a4a;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    color: #e0e0e0;
+    line-height: 1.5;
+    white-space: pre;
+  }
+  .code-block .comment { color: #6a9955; }
+  .code-block .keyword { color: #569cd6; }
+  .code-block .string { color: #ce9178; }
+  .code-block .func { color: #dcdcaa; }
+  .code-block .type { color: #4ec9b0; }
+  .code-block .num { color: #b5cea8; }
+
+  .alert-box {
+    padding: 20px 25px;
+    border-radius: 12px;
+    margin: 15px 0;
+  }
+  .alert-success { background: rgba(0,255,136,0.08); border: 1px solid #00ff88; }
+  .alert-success h4 { color: #00ff88; }
+  .alert-info { background: rgba(0,212,255,0.08); border: 1px solid #00d4ff; }
+  .alert-info h4 { color: #00d4ff; }
+  .alert-warning { background: rgba(255,159,67,0.08); border: 1px solid #ff9f43; }
+  .alert-warning h4 { color: #ff9f43; }
+
+  .diagram-box {
+    background: #141425;
+    border: 1px solid #2a2a4a;
+    border-radius: 16px;
+    padding: 25px;
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; margin: 2px; }
+  .badge-green { background: rgba(0,255,136,0.15); color: #00ff88; }
+  .badge-blue { background: rgba(0,212,255,0.15); color: #00d4ff; }
+  .badge-yellow { background: rgba(255,217,61,0.15); color: #ffd93d; }
+  .badge-red { background: rgba(255,107,107,0.15); color: #ff6b6b; }
+</style>
+</head>
+<body>
+
+<!-- ========== HEADER ========== -->
+<div class="header">
+  <h1>🖥️ Simulate Your Entire Project — No Hardware Needed!</h1>
+  <p>Complete guide to simulating ESP32 + PIR + RFID + Ultrasonic sensors using free online tools</p>
+</div>
+
+<!-- ========== 1. SIMULATOR OPTIONS ========== -->
+<div class="section">
+  <h2>1. 🛠️ Best Simulation Platforms (All FREE)</h2>
+  <div class="card-grid">
+
+    <!-- WOKWI -->
+    <div class="sim-card recommended">
+      <h3 style="color: #00ff88;">🌐 Wokwi Simulator</h3>
+      <span class="price">💯 100% FREE — Browser-based</span>
+      <p>The #1 choice for ESP32/Arduino simulation. Runs in your browser with full WiFi simulation!</p>
+      <ul>
+        <li>ESP32 & ESP8266 fully supported</li>
+        <li>PIR sensor simulation (click to trigger motion)</li>
+        <li>RFID RC522 simulation (virtual card tap)</li>
+        <li>Ultrasonic HC-SR04 with adjustable distance</li>
+        <li>OLED display (SSD1306) live rendering</li>
+        <li>Built-in WiFi simulation (connects to real internet!)</li>
+        <li>LCD, LED, Buzzer, Servo all available</li>
+        <li>Share projects via URL link</li>
+        <li>Supports Arduino C++ & MicroPython</li>
+      </ul>
+      <a class="link" href="https://wokwi.com" target="_blank">🚀 Open Wokwi.com</a>
+    </div>
+
+    <!-- TINKERCAD -->
+    <div class="sim-card">
+      <h3 style="color: #ffd93d;">🔧 Tinkercad Circuits</h3>
+      <span class="price">💯 FREE — by Autodesk</span>
+      <p>Great for Arduino UNO simulation with visual drag-and-drop. Perfect for beginners.</p>
+      <ul>
+        <li>Arduino UNO simulation</li>
+        <li>PIR sensor with visual motion trigger</li>
+        <li>Ultrasonic sensor with slider</li>
+        <li>LED, Buzzer, LCD supported</li>
+        <li>Block-based + text coding</li>
+        <li class="con">No ESP32 support (Arduino only)</li>
+        <li class="con">No RFID RC522 module</li>
+        <li class="con">No WiFi simulation</li>
+      </ul>
+      <a class="link" href="https://www.tinkercad.com/circuits" target="_blank">Open Tinkercad</a>
+    </div>
+
+    <!-- PROTEUS -->
+    <div class="sim-card">
+      <h3 style="color: #a855f7;">⚡ Proteus Professional</h3>
+      <span class="price">💰 Paid ($$$) — Desktop App</span>
+      <p>Industry-grade circuit simulator. Best for PCB design + schematic but complex.</p>
+      <ul>
+        <li>Arduino, PIC, AVR simulation</li>
+        <li>RFID simulation via Virtual Terminal</li>
+        <li>Full oscilloscope & logic analyzer</li>
+        <li>PCB layout design</li>
+        <li class="con">No native ESP32 support</li>
+        <li class="con">Expensive license</li>
+        <li class="con">Steep learning curve</li>
+      </ul>
+      <a class="link" href="https://www.labcenter.com" target="_blank">Proteus Website</a>
+    </div>
+
+    <!-- SimulIDE -->
+    <div class="sim-card">
+      <h3 style="color: #38bdf8;">🔬 SimulIDE</h3>
+      <span class="price">💯 FREE — Open Source Desktop</span>
+      <p>Lightweight open-source simulator for Arduino and basic circuits.</p>
+      <ul>
+        <li>Arduino Uno, Mega, Nano</li>
+        <li>Basic sensor simulation</li>
+        <li>Oscilloscope built-in</li>
+        <li>Lightweight & fast</li>
+        <li class="con">Limited sensor library</li>
+        <li class="con">No ESP32 support</li>
+        <li class="con">No WiFi/cloud simulation</li>
+      </ul>
+      <a class="link" href="https://simulide.com" target="_blank">SimulIDE Website</a>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 2. COMPARISON TABLE ========== -->
+<div class="section">
+  <h2>2. 📊 Feature Comparison — Which Simulator to Use?</h2>
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th style="color:#00ff88">🏆 Wokwi</th>
+        <th>Tinkercad</th>
+        <th>Proteus</th>
+        <th>SimulIDE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>ESP32 Support</td><td class="yes">✅ Full</td><td class="no">❌</td><td class="partial">⚠️ Limited</td><td class="no">❌</td></tr>
+      <tr><td>ESP8266 Support</td><td class="yes">✅ Full</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td></tr>
+      <tr><td>PIR Sensor</td><td class="yes">✅ Interactive</td><td class="yes">✅ Interactive</td><td class="yes">✅</td><td class="partial">⚠️</td></tr>
+      <tr><td>RFID RC522</td><td class="yes">✅ Virtual Cards</td><td class="no">❌</td><td class="partial">⚠️ Virtual Terminal</td><td class="no">❌</td></tr>
+      <tr><td>Ultrasonic HC-SR04</td><td class="yes">✅ Slider</td><td class="yes">✅ Slider</td><td class="yes">✅</td><td class="partial">⚠️</td></tr>
+      <tr><td>OLED Display</td><td class="yes">✅ Live Render</td><td class="no">❌</td><td class="partial">⚠️</td><td class="no">❌</td></tr>
+      <tr><td>WiFi Simulation</td><td class="yes">✅ Real Internet!</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td></tr>
+      <tr><td>Cloud (Firebase)</td><td class="yes">✅ Works!</td><td class="no">❌</td><td class="no">❌</td><td class="no">❌</td></tr>
+      <tr><td>Cost</td><td class="yes">FREE</td><td class="yes">FREE</td><td class="no">$$$</td><td class="yes">FREE</td></tr>
+      <tr><td>Browser-based</td><td class="yes">✅</td><td class="yes">✅</td><td class="no">❌ Desktop</td><td class="no">❌ Desktop</td></tr>
+      <tr><td>Shareable Link</td><td class="yes">✅</td><td class="yes">✅</td><td class="no">❌</td><td class="no">❌</td></tr>
+      <tr style="background: rgba(0,255,136,0.05);">
+        <td style="color:#00ff88; font-weight:bold;">Best For Your Project?</td>
+        <td class="yes">🏆 PERFECT FIT</td>
+        <td class="partial">Partial (no ESP32)</td>
+        <td class="partial">Overkill</td>
+        <td class="no">Not suitable</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ========== 3. WOKWI STEP-BY-STEP ========== -->
+<div class="section">
+  <h2>3. 🚀 Step-by-Step: Build Your Project on Wokwi (10 Minutes!)</h2>
+  
+  <div class="step-container">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Go to Wokwi.com & Create a Project</h4>
+        <p>Visit <a href="https://wokwi.com" target="_blank" style="color:#00d4ff;">wokwi.com</a> → Click <strong>"Start from Scratch"</strong> → Choose <code>ESP32</code> board</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Add Sensors from Component Library</h4>
+        <p>Click the <strong>"+"</strong> button and search for these components:</p>
+        <p>
+          <span class="badge badge-green">PIR Sensor (HC-SR501)</span>
+          <span class="badge badge-yellow">RFID (RC522)</span>
+          <span class="badge badge-blue">Ultrasonic (HC-SR04)</span>
+          <span class="badge badge-red">OLED Display (SSD1306)</span>
+          <span class="badge badge-green">LED</span>
+          <span class="badge badge-yellow">Buzzer</span>
+        </p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Wire the Components</h4>
+        <p>Click pins to create wires. Follow the pin mapping from our hardware diagram. Wokwi auto-colors wires!</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>Write the Arduino Code</h4>
+        <p>Paste the code (provided below) into the <code>sketch.ino</code> editor. Add libraries via <code>libraries.txt</code>.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>Run the Simulation!</h4>
+        <p>Click the green <strong>▶ Play</strong> button. Click the PIR sensor to simulate motion. Click the RFID tag to simulate card tap. Drag the ultrasonic slider to change distance!</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <h4>Test WiFi & Cloud Connection</h4>
+        <p>Wokwi provides a virtual WiFi network called <code>"Wokwi-GUEST"</code> with no password. Your ESP32 can actually connect to real Firebase!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 4. SIMULATION INTERACTION DIAGRAM ========== -->
+<div class="section">
+  <h2>4. 🎮 How You Interact with the Simulator</h2>
+  <div class="diagram-box">
+    <svg width="900" height="500" viewBox="0 0 900 500">
+      <!-- Title -->
+      <text x="450" y="30" text-anchor="middle" fill="#00d4ff" font-size="16" font-weight="bold">Wokwi Simulator — How Each Sensor is Simulated</text>
+
+      <!-- PIR Sensor -->
+      <rect x="30" y="60" width="250" height="170" rx="12" fill="#1b2838" stroke="#ff6b6b" stroke-width="2"/>
+      <text x="155" y="90" text-anchor="middle" fill="#ff6b6b" font-size="15" font-weight="bold">🔴 PIR Sensor Simulation</text>
+      <text x="155" y="115" text-anchor="middle" fill="#aaa" font-size="12">How to trigger motion:</text>
+      <text x="155" y="140" text-anchor="middle" fill="#fff" font-size="11">🖱️ Click the sensor → A detection</text>
+      <text x="155" y="158" text-anchor="middle" fill="#fff" font-size="11">zone appears. Drag the "person"</text>
+      <text x="155" y="176" text-anchor="middle" fill="#fff" font-size="11">circle into the zone to simulate</text>
+      <text x="155" y="194" text-anchor="middle" fill="#fff" font-size="11">motion. Move it away to stop.</text>
+      <text x="155" y="218" text-anchor="middle" fill="#6bcb77" font-size="11" font-weight="bold">Output: HIGH when motion detected</text>
+
+      <!-- RFID -->
+      <rect x="310" y="60" width="260" height="170" rx="12" fill="#1b2838" stroke="#ffd93d" stroke-width="2"/>
+      <text x="440" y="90" text-anchor="middle" fill="#ffd93d" font-size="15" font-weight="bold">💳 RFID RC522 Simulation</text>
+      <text x="440" y="115" text-anchor="middle" fill="#aaa" font-size="12">How to scan cards:</text>
+      <text x="440" y="140" text-anchor="middle" fill="#fff" font-size="11">🖱️ Click the RFID reader component.</text>
+      <text x="440" y="158" text-anchor="middle" fill="#fff" font-size="11">A virtual RFID tag appears.</text>
+      <text x="440" y="176" text-anchor="middle" fill="#fff" font-size="11">Each tag has a unique UID like:</text>
+      <text x="440" y="194" text-anchor="middle" fill="#00ff88" font-size="12" font-weight="bold">0x46 0xE1 0x0A 0x29</text>
+      <text x="440" y="218" text-anchor="middle" fill="#6bcb77" font-size="11" font-weight="bold">You can add multiple virtual cards!</text>
+
+      <!-- Ultrasonic -->
+      <rect x="600" y="60" width="270" height="170" rx="12" fill="#1b2838" stroke="#6bcb77" stroke-width="2"/>
+      <text x="735" y="90" text-anchor="middle" fill="#6bcb77" font-size="15" font-weight="bold">📡 Ultrasonic HC-SR04</text>
+      <text x="735" y="115" text-anchor="middle" fill="#aaa" font-size="12">How to change distance:</text>
+      <text x="735" y="140" text-anchor="middle" fill="#fff" font-size="11">🖱️ Click the sensor → A slider</text>
+      <text x="735" y="158" text-anchor="middle" fill="#fff" font-size="11">appears. Drag it to simulate</text>
+      <text x="735" y="176" text-anchor="middle" fill="#fff" font-size="11">distance from 2cm to 400cm.</text>
+      <text x="735" y="194" text-anchor="middle" fill="#fff" font-size="11">Perfect for entry/exit detection!</text>
+      <text x="735" y="218" text-anchor="middle" fill="#6bcb77" font-size="11" font-weight="bold">Output: Distance in cm via Echo pin</text>
+
+      <!-- OLED -->
+      <rect x="30" y="260" width="250" height="160" rx="12" fill="#1b2838" stroke="#38bdf8" stroke-width="2"/>
+      <text x="155" y="290" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">🖥️ OLED Display</text>
+      <text x="155" y="315" text-anchor="middle" fill="#aaa" font-size="12">Live rendering:</text>
+      <text x="155" y="340" text-anchor="middle" fill="#fff" font-size="11">The 128x64 pixel OLED screen</text>
+      <text x="155" y="358" text-anchor="middle" fill="#fff" font-size="11">renders LIVE in the simulator!</text>
+      <text x="155" y="376" text-anchor="middle" fill="#fff" font-size="11">Shows: name, time, status,</text>
+      <text x="155" y="394" text-anchor="middle" fill="#fff" font-size="11">attendance confirmation ✓</text>
+      <text x="155" y="412" text-anchor="middle" fill="#6bcb77" font-size="11" font-weight="bold">Uses I2C: SDA=21, SCL=22</text>
+
+      <!-- WiFi -->
+      <rect x="310" y="260" width="260" height="160" rx="12" fill="#1b2838" stroke="#a855f7" stroke-width="2"/>
+      <text x="440" y="290" text-anchor="middle" fill="#a855f7" font-size="15" font-weight="bold">📶 WiFi + Cloud</text>
+      <text x="440" y="315" text-anchor="middle" fill="#aaa" font-size="12">Real Internet access:</text>
+      <text x="440" y="340" text-anchor="middle" fill="#fff" font-size="11">Connect to "Wokwi-GUEST" WiFi</text>
+      <text x="440" y="358" text-anchor="middle" fill="#fff" font-size="11">(no password needed). ESP32 gets</text>
+      <text x="440" y="376" text-anchor="middle" fill="#fff" font-size="11">REAL internet access! Can send</text>
+      <text x="440" y="394" text-anchor="middle" fill="#fff" font-size="11">data to Firebase, ThingSpeak, etc.</text>
+      <text x="440" y="412" text-anchor="middle" fill="#00ff88" font-size="11" font-weight="bold">WiFi.begin("Wokwi-GUEST", "")</text>
+
+      <!-- LED + Buzzer -->
+      <rect x="600" y="260" width="270" height="160" rx="12" fill="#1b2838" stroke="#fb923c" stroke-width="2"/>
+      <text x="735" y="290" text-anchor="middle" fill="#fb923c" font-size="15" font-weight="bold">💡🔊 LED + Buzzer</text>
+      <text x="735" y="315" text-anchor="middle" fill="#aaa" font-size="12">Visual + Audio feedback:</text>
+      <text x="735" y="340" text-anchor="middle" fill="#fff" font-size="11">LEDs glow with correct color</text>
+      <text x="735" y="358" text-anchor="middle" fill="#fff" font-size="11">in the simulator. Buzzer plays</text>
+      <text x="735" y="376" text-anchor="middle" fill="#fff" font-size="11">actual sound through your</text>
+      <text x="735" y="394" text-anchor="middle" fill="#fff" font-size="11">computer speakers! 🔊</text>
+      <text x="735" y="412" text-anchor="middle" fill="#6bcb77" font-size="11" font-weight="bold">Real visual + audio output</text>
+
+      <!-- Bottom note -->
+      <rect x="100" y="450" width="700" height="40" rx="8" fill="rgba(0,255,136,0.06)" stroke="#00ff88" stroke-width="1"/>
+      <text x="450" y="475" text-anchor="middle" fill="#00ff88" font-size="13" font-weight="bold">🎯 Everything works EXACTLY like real hardware — you can demo your project without buying anything!</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ========== 5. SAMPLE CODE ========== -->
+<div class="section">
+  <h2>5. 📝 Complete Simulation Code (Copy & Paste into Wokwi)</h2>
+  
+  <div class="alert-info alert-box">
+    <h4>📋 Instructions</h4>
+    <p>1. Go to <a href="https://wokwi.com/projects/new/esp32" target="_blank" style="color:#00d4ff;">wokwi.com/projects/new/esp32</a> to create a new ESP32 project.<br>
+    2. Copy the code below into <code>sketch.ino</code>.<br>
+    3. Add the <code>diagram.json</code> (circuit layout) provided below.<br>
+    4. Add required libraries in <code>libraries.txt</code>.<br>
+    5. Click ▶ to run!</p>
+  </div>
+
+  <h3 style="color:#ff9f43; margin-top:20px;">📄 sketch.ino — Main Arduino Code</h3>
+  <div class="code-block"><span class="comment">// ============================================
+// Sensor-Based Attendance System — Wokwi Simulation
+// ESP32 + PIR + RFID + Ultrasonic + OLED + Buzzer
+// ============================================</span>
+
+<span class="keyword">#include</span> &lt;SPI.h&gt;
+<span class="keyword">#include</span> &lt;MFRC522.h&gt;
+<span class="keyword">#include</span> &lt;Wire.h&gt;
+<span class="keyword">#include</span> &lt;Adafruit_GFX.h&gt;
+<span class="keyword">#include</span> &lt;Adafruit_SSD1306.h&gt;
+<span class="keyword">#include</span> &lt;WiFi.h&gt;
+
+<span class="comment">// ---- Pin Definitions ----</span>
+<span class="keyword">#define</span> PIR_PIN        <span class="num">27</span>       <span class="comment">// PIR motion sensor</span>
+<span class="keyword">#define</span> TRIG_PIN       <span class="num">13</span>       <span class="comment">// Ultrasonic trigger</span>
+<span class="keyword">#define</span> ECHO_PIN       <span class="num">12</span>       <span class="comment">// Ultrasonic echo</span>
+<span class="keyword">#define</span> RFID_SS_PIN    <span class="num">5</span>        <span class="comment">// RFID SDA</span>
+<span class="keyword">#define</span> RFID_RST_PIN   <span class="num">0</span>        <span class="comment">// RFID Reset</span>
+<span class="keyword">#define</span> LED_GREEN      <span class="num">2</span>        <span class="comment">// Green LED (attendance OK)</span>
+<span class="keyword">#define</span> LED_RED        <span class="num">4</span>        <span class="comment">// Red LED (rejected)</span>
+<span class="keyword">#define</span> BUZZER_PIN     <span class="num">15</span>       <span class="comment">// Buzzer for audio feedback</span>
+
+<span class="comment">// ---- OLED Display ----</span>
+<span class="keyword">#define</span> SCREEN_WIDTH  <span class="num">128</span>
+<span class="keyword">#define</span> SCREEN_HEIGHT <span class="num">64</span>
+<span class="type">Adafruit_SSD1306</span> display(SCREEN_WIDTH, SCREEN_HEIGHT, &amp;Wire, -<span class="num">1</span>);
+
+<span class="comment">// ---- RFID Reader ----</span>
+<span class="type">MFRC522</span> rfid(RFID_SS_PIN, RFID_RST_PIN);
+
+<span class="comment">// ---- WiFi Credentials (Wokwi virtual WiFi) ----</span>
+<span class="keyword">const char</span>* ssid     = <span class="string">"Wokwi-GUEST"</span>;
+<span class="keyword">const char</span>* password  = <span class="string">""</span>;
+
+<span class="comment">// ---- Registered Users (simulate database) ----</span>
+<span class="keyword">struct</span> <span class="type">User</span> {
+  <span class="type">String</span> uid;
+  <span class="type">String</span> name;
+  <span class="type">String</span> id;
+};
+
+<span class="type">User</span> registeredUsers[] = {
+  {<span class="string">"a1b2c3d4"</span>, <span class="string">"Rahim Ahmed"</span>,    <span class="string">"STU-001"</span>},
+  {<span class="string">"e5f6a7b8"</span>, <span class="string">"Fatima Khan"</span>,    <span class="string">"STU-002"</span>},
+  {<span class="string">"c9d0e1f2"</span>, <span class="string">"Karim Hossain"</span>,  <span class="string">"STU-003"</span>},
+};
+<span class="keyword">const int</span> NUM_USERS = <span class="num">3</span>;
+
+<span class="comment">// ---- Attendance Log ----</span>
+<span class="keyword">int</span> attendanceCount = <span class="num">0</span>;
+
+<span class="comment">// ============================================</span>
+<span class="keyword">void</span> <span class="func">setup</span>() {
+  Serial.<span class="func">begin</span>(<span class="num">115200</span>);
+  
+  <span class="comment">// Initialize pins</span>
+  <span class="func">pinMode</span>(PIR_PIN, INPUT);
+  <span class="func">pinMode</span>(TRIG_PIN, OUTPUT);
+  <span class="func">pinMode</span>(ECHO_PIN, INPUT);
+  <span class="func">pinMode</span>(LED_GREEN, OUTPUT);
+  <span class="func">pinMode</span>(LED_RED, OUTPUT);
+  <span class="func">pinMode</span>(BUZZER_PIN, OUTPUT);
+  
+  <span class="comment">// Initialize OLED</span>
+  <span class="keyword">if</span>(!display.<span class="func">begin</span>(SSD1306_SWITCHCAPVCC, <span class="num">0x3C</span>)) {
+    Serial.<span class="func">println</span>(<span class="string">"OLED failed!"</span>);
+  }
+  display.<span class="func">clearDisplay</span>();
+  display.<span class="func">setTextSize</span>(<span class="num">1</span>);
+  display.<span class="func">setTextColor</span>(WHITE);
+  display.<span class="func">setCursor</span>(<span class="num">10</span>, <span class="num">10</span>);
+  display.<span class="func">println</span>(<span class="string">"Attendance System"</span>);
+  display.<span class="func">setCursor</span>(<span class="num">10</span>, <span class="num">25</span>);
+  display.<span class="func">println</span>(<span class="string">"Initializing..."</span>);
+  display.<span class="func">display</span>();
+  
+  <span class="comment">// Initialize SPI & RFID</span>
+  SPI.<span class="func">begin</span>();
+  rfid.<span class="func">PCD_Init</span>();
+  
+  <span class="comment">// Connect WiFi</span>
+  Serial.<span class="func">println</span>(<span class="string">"Connecting to WiFi..."</span>);
+  WiFi.<span class="func">begin</span>(ssid, password);
+  <span class="keyword">while</span>(WiFi.<span class="func">status</span>() != WL_CONNECTED) {
+    <span class="func">delay</span>(<span class="num">500</span>);
+    Serial.<span class="func">print</span>(<span class="string">"."</span>);
+  }
+  Serial.<span class="func">println</span>(<span class="string">"\nWiFi Connected!"</span>);
+  Serial.<span class="func">print</span>(<span class="string">"IP: "</span>);
+  Serial.<span class="func">println</span>(WiFi.<span class="func">localIP</span>());
+  
+  <span class="comment">// Ready screen</span>
+  <span class="func">showReadyScreen</span>();
+  Serial.<span class="func">println</span>(<span class="string">"=== System Ready ==="</span>);
+}
+
+<span class="comment">// ============================================</span>
+<span class="keyword">void</span> <span class="func">loop</span>() {
+  <span class="comment">// Step 1: Check PIR motion</span>
+  <span class="keyword">int</span> motionDetected = <span class="func">digitalRead</span>(PIR_PIN);
+  
+  <span class="comment">// Step 2: Read ultrasonic distance</span>
+  <span class="keyword">float</span> distance = <span class="func">getDistance</span>();
+  
+  <span class="keyword">if</span> (motionDetected == HIGH || distance &lt; <span class="num">50</span>) {
+    Serial.<span class="func">println</span>(<span class="string">"👤 Motion detected! Waiting for RFID..."</span>);
+    <span class="func">showMotionDetected</span>();
+    
+    <span class="comment">// Step 3: Wait for RFID scan (5 second window)</span>
+    <span class="keyword">unsigned long</span> startTime = <span class="func">millis</span>();
+    <span class="keyword">while</span>(<span class="func">millis</span>() - startTime &lt; <span class="num">5000</span>) {
+      <span class="keyword">if</span>(rfid.<span class="func">PICC_IsNewCardPresent</span>() &amp;&amp; rfid.<span class="func">PICC_ReadCardSerial</span>()) {
+        <span class="type">String</span> cardUID = <span class="func">getCardUID</span>();
+        Serial.<span class="func">print</span>(<span class="string">"Card UID: "</span>);
+        Serial.<span class="func">println</span>(cardUID);
+        
+        <span class="comment">// Step 4: Check if registered</span>
+        <span class="keyword">int</span> userIndex = <span class="func">findUser</span>(cardUID);
+        
+        <span class="keyword">if</span>(userIndex >= <span class="num">0</span>) {
+          <span class="comment">// ✅ ATTENDANCE MARKED!</span>
+          attendanceCount++;
+          <span class="func">markAttendance</span>(registeredUsers[userIndex]);
+        } <span class="keyword">else</span> {
+          <span class="comment">// ❌ REJECTED</span>
+          <span class="func">rejectCard</span>(cardUID);
+        }
+        
+        rfid.<span class="func">PICC_HaltA</span>();
+        rfid.<span class="func">PCD_StopCrypto1</span>();
+        <span class="keyword">break</span>;
+      }
+      <span class="func">delay</span>(<span class="num">100</span>);
+    }
+  }
+  
+  <span class="func">showReadyScreen</span>();
+  <span class="func">delay</span>(<span class="num">200</span>);
+}
+
+<span class="comment">// ---- Helper Functions ----</span>
+
+<span class="keyword">float</span> <span class="func">getDistance</span>() {
+  <span class="func">digitalWrite</span>(TRIG_PIN, LOW);
+  <span class="func">delayMicroseconds</span>(<span class="num">2</span>);
+  <span class="func">digitalWrite</span>(TRIG_PIN, HIGH);
+  <span class="func">delayMicroseconds</span>(<span class="num">10</span>);
+  <span class="func">digitalWrite</span>(TRIG_PIN, LOW);
+  <span class="keyword">long</span> duration = <span class="func">pulseIn</span>(ECHO_PIN, HIGH, <span class="num">30000</span>);
+  <span class="keyword">return</span> duration * <span class="num">0.034</span> / <span class="num">2</span>;
+}
+
+<span class="type">String</span> <span class="func">getCardUID</span>() {
+  <span class="type">String</span> uid = <span class="string">""</span>;
+  <span class="keyword">for</span>(<span class="keyword">byte</span> i = <span class="num">0</span>; i &lt; rfid.uid.size; i++) {
+    uid += <span class="type">String</span>(rfid.uid.uidByte[i], HEX);
+  }
+  <span class="keyword">return</span> uid;
+}
+
+<span class="keyword">int</span> <span class="func">findUser</span>(<span class="type">String</span> uid) {
+  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="num">0</span>; i &lt; NUM_USERS; i++) {
+    <span class="keyword">if</span>(registeredUsers[i].uid == uid) <span class="keyword">return</span> i;
+  }
+  <span class="keyword">return</span> -<span class="num">1</span>;
+}
+
+<span class="keyword">void</span> <span class="func">markAttendance</span>(<span class="type">User</span> user) {
+  Serial.<span class="func">println</span>(<span class="string">"✅ ATTENDANCE MARKED: "</span> + user.name);
+  
+  <span class="comment">// Green LED + Buzzer beep</span>
+  <span class="func">digitalWrite</span>(LED_GREEN, HIGH);
+  <span class="func">tone</span>(BUZZER_PIN, <span class="num">1000</span>, <span class="num">200</span>);
+  
+  <span class="comment">// Show on OLED</span>
+  display.<span class="func">clearDisplay</span>();
+  display.<span class="func">setTextSize</span>(<span class="num">1</span>);
+  display.<span class="func">setCursor</span>(<span class="num">0</span>, <span class="num">0</span>);
+  display.<span class="func">println</span>(<span class="string">"=== WELCOME ==="</span>);
+  display.<span class="func">setTextSize</span>(<span class="num">2</span>);
+  display.<span class="func">setCursor</span>(<span class="num">0</span>, <span class="num">16</span>);
+  display.<span class="func">println</span>(user.name);
+  display.<span class="func">setTextSize</span>(<span class="num">1</span>);
+  display.<span class="func">setCursor</span>(<span class="num">0</span>, <span class="num">40</span>);
+  display.<span class="func">println</span>(<span class="string">"ID: "</span> + user.id);
+  display.<span class="func">setCursor</span>(<span class="num">0</span>, <span class="num">52</span>);
+  display.<span class="func">println</span>(<span class="string">"Attendance #"</span> + <span class="type">String</span>(attendanceCount));
+  display.<span class="func">display</span>();
+  
+  <span class="func">delay</span>(<span class="num">2000</span>);
+  <span class="func">digitalWrite</span>(LED_GREEN, LOW);
+}
+
+<span class="keyword">void</span> <span class="func">rejectCard</span>(<span class="type">String</span> uid) {
+  Serial.<span class="func">println</span>(<span class="string">"❌ REJECTED: Unknown card "</span> + uid);
+  
+  <span class="comment">// Red LED + Error buzzer</span>
+  <span class="func">digitalWrite</span>(LED_RED, HIGH);
+  <span class="func">tone</span>(BUZZER_PIN, <span class="num">300</span>, <span class="num">500</span>);
+  
+  display.<span class="func">clearDisplay</span>();
+  display.<span class="func">setTextSize</span>(<span class="num">2</span>);
+  display.<span class="func">setCursor</span>(<span class="num">10</span>, <span class="num">10</span>);
+  display.<span class="func">println</span>(<span class="string">"ACCESS"</span>);
+  display.<span class="func">println</span>(<span class="string">" DENIED!"</span>);
+  display.<span class="func">setTextSize</span>(<span class="num">1</span>);
+  display.<span class="func">setCursor</span>(<span class="num">0</span>, <span class="num">50</span>);
+  display.<span class="func">println</span>(<span class="string">"Card: "</span> + uid);
+  display.<span class="func">display</span>();
+  
+  <span class="func">delay</span>(<span class="num">2000</span>);
+  <span class="func">digitalWrite</span>(LED_RED, LOW);
+}
+
+<span class="keyword">void</span> <span class="func">showReadyScreen</span>() {
+  display.<span class="func">clearDisplay</span>();
+  display.<span class="func">setTextSize</span>(<span class="num">1</span>);
+  display.<span class="func">setCursor</span>(<span class="num">5</span>, <span class="num">0</span>);
+  display.<span class="func">println</span>(<span class="string">"ATTENDANCE SYSTEM"</span>);
+  display.<span class="func">drawLine</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">128</span>, <span class="num">10</span>, WHITE);
+  display.<span class="func">setCursor</span>(<span class="num">5</span>, <span class="num">18</span>);
+  display.<span class="func">println</span>(<span class="string">"Status: Ready"</span>);
+  display.<span class="func">setCursor</span>(<span class="num">5</span>, <span class="num">30</span>);
+  display.<span class="func">println</span>(<span class="string">"WiFi: Connected"</span>);
+  display.<span class="func">setCursor</span>(<span class="num">5</span>, <span class="num">42</span>);
+  display.<span class="func">println</span>(<span class="string">"Total: "</span> + <span class="type">String</span>(attendanceCount));
+  display.<span class="func">setCursor</span>(<span class="num">5</span>, <span class="num">54</span>);
+  display.<span class="func">println</span>(<span class="string">"Scan card or move..."</span>);
+  display.<span class="func">display</span>();
+}
+
+<span class="keyword">void</span> <span class="func">showMotionDetected</span>() {
+  display.<span class="func">clearDisplay</span>();
+  display.<span class="func">setTextSize</span>(<span class="num">1</span>);
+  display.<span class="func">setCursor</span>(<span class="num">10</span>, <span class="num">5</span>);
+  display.<span class="func">println</span>(<span class="string">"MOTION DETECTED!"</span>);
+  display.<span class="func">setTextSize</span>(<span class="num">2</span>);
+  display.<span class="func">setCursor</span>(<span class="num">10</span>, <span class="num">25</span>);
+  display.<span class="func">println</span>(<span class="string">"SCAN"</span>);
+  display.<span class="func">println</span>(<span class="string">" CARD"</span>);
+  display.<span class="func">display</span>();
+}</div>
+
+  <h3 style="color:#ff9f43; margin-top:20px;">📄 libraries.txt — Required Libraries</h3>
+  <div class="code-block"><span class="comment"># Add this file in Wokwi to auto-install libraries</span>
+Adafruit SSD1306
+Adafruit GFX Library
+MFRC522</div>
+
+  <h3 style="color:#ff9f43; margin-top:20px;">📄 diagram.json — Circuit Wiring (Paste in Wokwi)</h3>
+  <div class="code-block" style="font-size:0.78em; max-height: 300px; overflow-y: auto;">{
+  "version": 1,
+  "author": "Attendance System",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0 },
+    { "type": "wokwi-pir-motion-sensor", "id": "pir1", "top": -120, "left": -200 },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -120, "left": 200 },
+    { "type": "board-ssd1306", "id": "oled1", "top": 200, "left": -200 },
+    { "type": "wokwi-led", "id": "led1", "top": 200, "left": 200, "attrs": { "color": "green" } },
+    { "type": "wokwi-led", "id": "led2", "top": 200, "left": 260, "attrs": { "color": "red" } },
+    { "type": "wokwi-buzzer", "id": "bz1", "top": 200, "left": 330 },
+    { "type": "wokwi-resistor", "id": "r1", "top": 180, "left": 200, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 180, "left": 260, "attrs": { "value": "220" } }
+  ],
+  "connections": [
+    [ "esp:27", "pir1:OUT", "green", [] ],
+    [ "pir1:VCC", "esp:3V3", "red", [] ],
+    [ "pir1:GND", "esp:GND.2", "black", [] ],
+    [ "esp:13", "ultrasonic1:TRIG", "blue", [] ],
+    [ "esp:12", "ultrasonic1:ECHO", "purple", [] ],
+    [ "ultrasonic1:VCC", "esp:5V", "red", [] ],
+    [ "ultrasonic1:GND", "esp:GND.1", "black", [] ],
+    [ "oled1:SDA", "esp:21", "cyan", [] ],
+    [ "oled1:SCL", "esp:22", "orange", [] ],
+    [ "oled1:VCC", "esp:3V3", "red", [] ],
+    [ "oled1:GND", "esp:GND.3", "black", [] ],
+    [ "esp:2", "r1:1", "green", [] ],
+    [ "r1:2", "led1:A", "green", [] ],
+    [ "led1:C", "esp:GND.2", "black", [] ],
+    [ "esp:4", "r2:1", "orange", [] ],
+    [ "r2:2", "led2:A", "orange", [] ],
+    [ "led2:C", "esp:GND.2", "black", [] ],
+    [ "esp:15", "bz1:1", "yellow", [] ],
+    [ "bz1:2", "esp:GND.2", "black", [] ]
+  ]
+}</div>
+</div>
+
+<!-- ========== 6. WOKWI EXISTING PROJECTS ========== -->
+<div class="section">
+  <h2>6. 🔗 Ready-Made Wokwi Projects (Open & Run Instantly)</h2>
+  <div class="alert-success alert-box">
+    <h4>🎯 You can open these existing projects and run them RIGHT NOW — no setup needed!</h4>
+  </div>
+  <div class="card-grid">
+    <div class="sim-card">
+      <h3 style="color: #ffd93d;">💳 RFID Attendance System</h3>
+      <p>Complete RFID attendance system with LCD display, buzzer feedback, and card scanning.</p>
+      <a class="link" href="https://wokwi.com/projects/455843607143716865" target="_blank">▶ Open & Run</a>
+    </div>
+    <div class="sim-card">
+      <h3 style="color: #ff6b6b;">🔴 PIR Sensor + LED</h3>
+      <p>PIR motion detection with ESP32, LED, Buzzer, and OLED display.</p>
+      <a class="link" href="https://wokwi.com/projects/393972085545441281" target="_blank">▶ Open & Run</a>
+    </div>
+    <div class="sim-card">
+      <h3 style="color: #6bcb77;">🔐 RFID + PIR + Servo Access</h3>
+      <p>Combined RFID + PIR + WiFi access control system with ESP32. Very similar to your project!</p>
+      <a class="link" href="https://wokwi.com/projects/397880891222082561" target="_blank">▶ Open & Run</a>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 7. WORKFLOW ========== -->
+<div class="section">
+  <h2>7. 🔄 Simulation Workflow Diagram</h2>
+  <div class="diagram-box">
+    <svg width="850" height="550" viewBox="0 0 850 550">
+      <text x="425" y="25" text-anchor="middle" fill="#00d4ff" font-size="16" font-weight="bold">Complete Simulation Workflow — From Browser to Demo</text>
+
+      <!-- Phase 1 -->
+      <rect x="30" y="50" width="240" height="200" rx="14" fill="#1b2838" stroke="#00d4ff" stroke-width="2"/>
+      <text x="150" y="78" text-anchor="middle" fill="#00d4ff" font-size="14" font-weight="bold">Phase 1: Circuit Design</text>
+      <text x="150" y="100" text-anchor="middle" fill="#aaa" font-size="11">On Wokwi.com</text>
+      <line x1="50" y1="110" x2="250" y2="110" stroke="#2a2a4a" stroke-width="1"/>
+      <text x="55" y="130" fill="#bbb" font-size="11">1. Select ESP32 board</text>
+      <text x="55" y="150" fill="#bbb" font-size="11">2. Add PIR, RFID, Ultrasonic</text>
+      <text x="55" y="170" fill="#bbb" font-size="11">3. Add OLED, LED, Buzzer</text>
+      <text x="55" y="190" fill="#bbb" font-size="11">4. Wire all connections</text>
+      <text x="55" y="210" fill="#bbb" font-size="11">5. Verify pin mapping</text>
+      <text x="150" y="240" text-anchor="middle" fill="#00ff88" font-size="10" font-weight="bold">⏱️ ~15 minutes</text>
+
+      <!-- Arrow -->
+      <line x1="270" y1="150" x2="310" y2="150" stroke="#00d4ff" stroke-width="2"/>
+      <polygon points="305,143 315,150 305,157" fill="#00d4ff"/>
+
+      <!-- Phase 2 -->
+      <rect x="315" y="50" width="230" height="200" rx="14" fill="#1b2838" stroke="#ffd93d" stroke-width="2"/>
+      <text x="430" y="78" text-anchor="middle" fill="#ffd93d" font-size="14" font-weight="bold">Phase 2: Write Code</text>
+      <text x="430" y="100" text-anchor="middle" fill="#aaa" font-size="11">Arduino C++ in browser</text>
+      <line x1="335" y1="110" x2="525" y2="110" stroke="#2a2a4a" stroke-width="1"/>
+      <text x="330" y="130" fill="#bbb" font-size="11">1. Write sketch.ino</text>
+      <text x="330" y="150" fill="#bbb" font-size="11">2. Add library imports</text>
+      <text x="330" y="170" fill="#bbb" font-size="11">3. Define sensor logic</text>
+      <text x="330" y="190" fill="#bbb" font-size="11">4. Add WiFi connection</text>
+      <text x="330" y="210" fill="#bbb" font-size="11">5. Implement attendance flow</text>
+      <text x="430" y="240" text-anchor="middle" fill="#00ff88" font-size="10" font-weight="bold">⏱️ ~30–60 minutes</text>
+
+      <!-- Arrow -->
+      <line x1="545" y1="150" x2="585" y2="150" stroke="#ffd93d" stroke-width="2"/>
+      <polygon points="580,143 590,150 580,157" fill="#ffd93d"/>
+
+      <!-- Phase 3 -->
+      <rect x="590" y="50" width="230" height="200" rx="14" fill="#1b2838" stroke="#6bcb77" stroke-width="2"/>
+      <text x="705" y="78" text-anchor="middle" fill="#6bcb77" font-size="14" font-weight="bold">Phase 3: Simulate!</text>
+      <text x="705" y="100" text-anchor="middle" fill="#aaa" font-size="11">Run & interact</text>
+      <line x1="610" y1="110" x2="800" y2="110" stroke="#2a2a4a" stroke-width="1"/>
+      <text x="605" y="130" fill="#bbb" font-size="11">1. Click ▶ Play button</text>
+      <text x="605" y="150" fill="#bbb" font-size="11">2. Click PIR → motion triggers</text>
+      <text x="605" y="170" fill="#bbb" font-size="11">3. Click RFID → scan card</text>
+      <text x="605" y="190" fill="#bbb" font-size="11">4. See OLED display output</text>
+      <text x="605" y="210" fill="#bbb" font-size="11">5. Hear buzzer beep! 🔊</text>
+      <text x="705" y="240" text-anchor="middle" fill="#00ff88" font-size="10" font-weight="bold">⏱️ Real-time interaction!</text>
+
+      <!-- Phase 4: Demo -->
+      <rect x="150" y="310" width="550" height="100" rx="14" fill="#0f3460" stroke="#00ff88" stroke-width="3"/>
+      <text x="425" y="340" text-anchor="middle" fill="#00ff88" font-size="16" font-weight="bold">🎓 Phase 4: Present Your Project!</text>
+      <text x="425" y="365" text-anchor="middle" fill="#fff" font-size="12">Open Wokwi on a projector → Run the simulation live → Show Serial Monitor logs</text>
+      <text x="425" y="385" text-anchor="middle" fill="#fff" font-size="12">OLED shows names → LED blinks → Buzzer sounds → WiFi connects → 🎉 Impressed!</text>
+      <text x="425" y="400" text-anchor="middle" fill="#6bcb77" font-size="10">Share the Wokwi project link so your professor can try it themselves!</text>
+
+      <!-- Arrows down -->
+      <line x1="425" y1="250" x2="425" y2="310" stroke="#00ff88" stroke-width="2"/>
+      <polygon points="420,305 425,315 430,305" fill="#00ff88"/>
+
+      <!-- Tips -->
+      <rect x="100" y="440" width="650" height="90" rx="12" fill="rgba(255,159,67,0.08)" stroke="#ff9f43" stroke-width="1"/>
+      <text x="425" y="465" text-anchor="middle" fill="#ff9f43" font-size="14" font-weight="bold">💡 Pro Tips for Your Project Demo</text>
+      <text x="425" y="488" text-anchor="middle" fill="#bbb" font-size="11">• Screen-record the simulation as backup (use OBS or browser recording)</text>
+      <text x="425" y="505" text-anchor="middle" fill="#bbb" font-size="11">• Show the Serial Monitor output side-by-side with the circuit</text>
+      <text x="425" y="522" text-anchor="middle" fill="#bbb" font-size="11">• Mention: "If built physically, the same code runs on a real ESP32 without changes!"</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ========== 8. FINAL SUMMARY ========== -->
+<div class="section">
+  <h2>8. ✅ Summary</h2>
+  <div class="alert-success alert-box">
+    <h4>🎯 You DON'T Need to Buy Any Hardware!</h4>
+    <p style="margin-top:10px; color: #b0ffb0;">
+      <strong>Wokwi.com</strong> is your answer. It simulates:<br><br>
+      ✔ <strong>ESP32 microcontroller</strong> — with built-in WiFi that connects to real internet<br>
+      ✔ <strong>PIR sensor</strong> — click to simulate motion detection<br>
+      ✔ <strong>RFID RC522</strong> — virtual card scanning with unique UIDs<br>
+      ✔ <strong>Ultrasonic HC-SR04</strong> — slider to adjust distance<br>
+      ✔ <strong>OLED display</strong> — live pixel rendering on screen<br>
+      ✔ <strong>LEDs</strong> — glow green/red in the browser<br>
+      ✔ <strong>Buzzer</strong> — plays real sound through speakers<br>
+      ✔ <strong>WiFi → Firebase</strong> — actual cloud data sending<br><br>
+      🔗 The best part: <strong>Share your project via a URL link!</strong> Your professor can open it and run the simulation themselves.<br><br>
+      💰 Cost: <strong>$0.00</strong> — completely free, forever.
+    </p>
+  </div>
+</div>
+
+<div style="text-align: center; padding: 30px; color: #555; font-size: 12px;">
+  Simulation Guide for Sensor-Based Attendance & Activity Tracking System<br>
+  All diagrams and code provided — ready to simulate on Wokwi.com
+</div>
+
+</body>
+</html>

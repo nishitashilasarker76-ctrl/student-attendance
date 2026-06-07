@@ -1,0 +1,31 @@
+{
+  "activity_classification": {
+    "scores": {
+      "Random Forest": 0.9047619047619048,
+      "Gradient Boosting": 0.9074074074074074,
+      "SVM (RBF kernel)": 0.8928571428571429,
+      "Logistic Regression": 0.8544973544973545,
+      "KNN (k=7)": 0.8915343915343915
+    },
+    "best_model": "Gradient Boosting",
+    "best_accuracy": 0.9074074074074074,
+    "cv_mean": 0.8971
+  },
+  "anomaly_detection": {
+    "isolation_forest": 0.9693,
+    "random_forest_supervised": 1.0,
+    "best_model": "Random Forest (Supervised)",
+    "best_accuracy": 1.0
+  },
+  "attendance_prediction": {
+    "scores": {
+      "Random Forest": 0.8809523809523809,
+      "Gradient Boosting": 0.8571428571428571,
+      "SVM": 0.6666666666666666,
+      "Logistic Regression": 0.7142857142857143,
+      "Decision Tree": 0.6904761904761905
+    },
+    "best_model": "Random Forest",
+    "best_accuracy": 0.8809523809523809
+  }
+}

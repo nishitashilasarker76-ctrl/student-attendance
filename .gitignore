@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+venv/
+env/
+.venv/
+
+# Byte-compiled / optimized / DLL files
+*.so
+*.dylib
+
+# Jupyter
+.ipynb_checkpoints
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Keras / cache
+.keras/
+
+# Models and large artifacts (optional - remove if you want to push models)
+models/tensorflow/*.keras
+models/tflite/*.tflite
+models/*.h
+
+# Logs
+*.log
