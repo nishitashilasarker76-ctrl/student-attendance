@@ -225,7 +225,7 @@ If you use this project in your research, please cite:
 @thesis{attendance2026,
   title={Sensor-Based Attendance Management and Activity Tracking System using Wi-Fi Module},
   year={2026},
-  institution={Your University}
+  institution={Bangladesh University of Professions}
 }
 ```
 
