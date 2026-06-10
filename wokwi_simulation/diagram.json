@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "author": "Attendance System Thesis",
+  "author": "Employee Attendance System",
   "editor": "wokwi",
   "parts": [
     { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 200, "attrs": {} },
@@ -12,34 +12,28 @@
     { "type": "wokwi-buzzer", "id": "bz1", "top": 280, "left": 560, "attrs": {} },
     { "type": "wokwi-resistor", "id": "r1", "top": 260, "left": 430, "attrs": { "value": "220" } },
     { "type": "wokwi-resistor", "id": "r2", "top": 260, "left": 490, "attrs": { "value": "220" } },
-    { "type": "wokwi-rfid", "id": "rfid1", "top": -100, "left": -120, "attrs": {} }
+    { "type": "board-mfrc522", "id": "rfid1", "top": -100, "left": -150, "attrs": {} }
   ],
   "connections": [
     ["esp:27", "pir1:OUT", "green", ["v-20", "h-80"]],
     ["pir1:VCC", "esp:3V3", "red", ["v0"]],
     ["pir1:GND", "esp:GND.2", "black", ["v0"]],
-
     ["esp:13", "ultra1:TRIG", "blue", ["v-20", "h60"]],
     ["esp:12", "ultra1:ECHO", "purple", ["v-30", "h80"]],
     ["ultra1:VCC", "esp:5V", "red", ["v0"]],
     ["ultra1:GND", "esp:GND.1", "black", ["v0"]],
-
     ["oled1:SDA", "esp:21", "cyan", ["v20"]],
     ["oled1:SCL", "esp:22", "orange", ["v30"]],
     ["oled1:VCC", "esp:3V3", "red", ["v0"]],
     ["oled1:GND", "esp:GND.3", "black", ["v0"]],
-
     ["esp:2", "r1:1", "green", ["v40"]],
     ["r1:2", "led_g:A", "green", ["v0"]],
     ["led_g:C", "esp:GND.2", "black", ["v10"]],
-
     ["esp:4", "r2:1", "orange", ["v50"]],
     ["r2:2", "led_r:A", "orange", ["v0"]],
     ["led_r:C", "esp:GND.2", "black", ["v10"]],
-
     ["esp:15", "bz1:1", "yellow", ["v60"]],
     ["bz1:2", "esp:GND.2", "black", ["v10"]],
-
     ["rfid1:SDA", "esp:5", "green", ["v0"]],
     ["rfid1:SCK", "esp:18", "yellow", ["v0"]],
     ["rfid1:MOSI", "esp:23", "blue", ["v0"]],
