@@ -96,7 +96,9 @@ def test_class_balance(y):
     """Check and report class imbalance."""
     unique, counts = np.unique(y, return_counts=True)
     balance_ratio = counts.max() / counts.min()
-    return dict(zip(unique, counts)), balance_ratio
+    # Convert numpy types to Python native types for JSON serialization
+    balance_dict = {int(k): int(v) for k, v in zip(unique, counts)}
+    return balance_dict, balance_ratio
 
 
 def apply_smote_if_imbalanced(Xtr, ytr, threshold=2.0):
