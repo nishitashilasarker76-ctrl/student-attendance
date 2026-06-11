@@ -1,0 +1,153 @@
+{
+  "employee_activity": {
+    "dataset": "UCI HAR (Kaggle)",
+    "samples": 10299,
+    "features": 561,
+    "classes": [
+      "LAYING",
+      "SITTING",
+      "STANDING",
+      "WALKING",
+      "WALKING_DOWNSTAIRS",
+      "WALKING_UPSTAIRS"
+    ],
+    "best_model": "Logistic Regression",
+    "test_accuracy": 0.9545,
+    "detailed_metrics": {
+      "accuracy": 0.9545,
+      "precision_macro": 0.9574,
+      "precision_weighted": 0.9563,
+      "recall_macro": 0.9531,
+      "recall_weighted": 0.9545,
+      "f1_macro": 0.9543,
+      "f1_weighted": 0.9544,
+      "cohen_kappa": 0.9453,
+      "matthews_corrcoef": 0.9457
+    },
+    "cross_validation": {
+      "Random Forest": {
+        "test_accuracy": 0.9267,
+        "cv_mean": 0.9822,
+        "cv_std": 0.0021,
+        "cv_min": 0.9789,
+        "cv_max": 0.985,
+        "cv_scores": [
+          0.9789259007477906,
+          0.9850441876274643,
+          0.9816326530612245,
+          0.9816326530612245,
+          0.9836734693877551
+        ]
+      },
+      "Logistic Regression": {
+        "test_accuracy": 0.9545,
+        "cv_mean": 0.9842,
+        "cv_std": 0.0032,
+        "cv_min": 0.9816,
+        "cv_max": 0.9898,
+        "cv_scores": [
+          0.981645139360979,
+          0.9898028552005439,
+          0.9823129251700681,
+          0.9857142857142858,
+          0.9816326530612245
+        ]
+      },
+      "KNN (k=7)": {
+        "test_accuracy": 0.8887,
+        "cv_mean": 0.9606,
+        "cv_std": 0.006,
+        "cv_min": 0.949,
+        "cv_max": 0.9667,
+        "cv_scores": [
+          0.9619306594153637,
+          0.9666893269884432,
+          0.9625850340136054,
+          0.9625850340136054,
+          0.9489795918367347
+        ]
+      },
+      "Decision Tree": {
+        "test_accuracy": 0.8629,
+        "cv_mean": 0.9362,
+        "cv_std": 0.0041,
+        "cv_min": 0.9286,
+        "cv_max": 0.9401,
+        "cv_scores": [
+          0.9394969408565602,
+          0.9367777022433719,
+          0.9285714285714286,
+          0.9401360544217687,
+          0.9360544217687075
+        ]
+      }
+    },
+    "feature_importance": {
+      "tGravityAcc-min()-X": 1.0102188455151457,
+      "tGravityAcc-mean()-X": 1.008759751460195,
+      "tGravityAcc-max()-X": 1.0075966272438333,
+      "angle(X,gravityMean)": 0.9037733274682095,
+      "tGravityAcc-energy()-X": 0.899999107410519,
+      "tGravityAcc-energy()-Y": 0.894366373162485,
+      "tGravityAcc-energy()-Z": 0.5836929520638402,
+      "angle(Y,gravityMean)": 0.5287805359721922,
+      "tGravityAcc-max()-Y": 0.44919984764344995,
+      "tGravityAcc-mean()-Y": 0.4397673172883622,
+      "tGravityAcc-min()-Y": 0.43383820716582294,
+      "tGravityAcc-sma()": 0.41611360186023877,
+      "tBodyAcc-correlation()-Y,Z": 0.3173646789776973,
+      "tBodyAcc-correlation()-X,Y": 0.30810465225926836,
+      "tBodyGyroJerk-arCoeff()-Y,2": 0.2600803821371298
+    },
+    "confusion_matrix": [
+      [
+        533,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        430,
+        58,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        14,
+        518,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        493,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        6,
+        393,
+        19
+      ],
+      [
+        0,
+        0,
+        0,
+        24,
+        1,
+        446
+      ]
+    ],
+    "class_distribution": {
+      
