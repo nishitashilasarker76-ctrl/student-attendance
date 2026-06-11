@@ -1,0 +1,208 @@
+{
+  "activity": {
+    "dataset": "UCI HAR",
+    "samples": 10299,
+    "features": 561,
+    "classes": [
+      "LAYING",
+      "SITTING",
+      "STANDING",
+      "WALKING",
+      "WALKING_DOWNSTAIRS",
+      "WALKING_UPSTAIRS"
+    ],
+    "best_model": "Logistic Reg",
+    "cv_results": {
+      "Random Forest": {
+        "test_accuracy": 0.9267051238547676,
+        "cv_mean": 0.9178483793245373,
+        "cv_std": 0.013984438150175582,
+        "ci_lower": 0.900484,
+        "ci_upper": 0.935212
+      },
+      "Logistic Reg": {
+        "test_accuracy": 0.9545300305395318,
+        "cv_mean": 0.934991051485176,
+        "cv_std": 0.02450013975695533,
+        "ci_lower": 0.90457,
+        "ci_upper": 0.965412
+      },
+      "KNN": {
+        "test_accuracy": 0.8887003732609433,
+        "cv_mean": 0.8751382048400597,
+        "cv_std": 0.011658166263247248,
+        "ci_lower": 0.860663,
+        "ci_upper": 0.889614
+      }
+    },
+    "metrics": {
+      "accuracy": 0.9545300305395318,
+      "precision": 0.9562768338791979,
+      "recall": 0.9545300305395318,
+      "f1_score": 0.9544489918860206
+    },
+    "confusion_matrix": [
+      [
+        533,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        430,
+        58,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        14,
+        518,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        493,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        6,
+        393,
+        19
+      ],
+      [
+        0,
+        0,
+        0,
+        24,
+        1,
+        446
+      ]
+    ]
+  },
+  "occupancy": {
+    "dataset": "UCI Occupancy",
+    "samples": 10808,
+    "features": [
+      "Temperature",
+      "Humidity",
+      "Light",
+      "CO2",
+      "HumidityRatio"
+    ],
+    "classes": [
+      "Empty",
+      "Occupied"
+    ],
+    "best_model": "Logistic Reg",
+    "cv_results": {
+      "Random Forest": {
+        "test_accuracy": 0.9534709193245778,
+        "cv_mean": 0.9635341770700887,
+        "cv_std": 0.04166019310331271,
+        "ci_lower": 0.911806,
+        "ci_upper": 1.015262
+      },
+      "Logistic Reg": {
+        "test_accuracy": 0.9771106941838649,
+        "cv_mean": 0.9821933686574571,
+        "cv_std": 0.016259710664389474,
+        "ci_lower": 0.962004,
+        "ci_upper": 1.002382
+      },
+      "KNN": {
+        "test_accuracy": 0.9196998123827392,
+        "cv_mean": 0.9244807338729991,
+        "cv_std": 0.06880093987860683,
+        "ci_lower": 0.839053,
+        "ci_upper": 1.009908
+      }
+    },
+    "metrics": {
+      "accuracy": 0.9771106941838649,
+      "precision": 0.9779702809159956,
+      "recall": 0.9771106941838649,
+      "f1_score": 0.9772197635268522,
+      "auc": 0.991579950364488
+    },
+    "confusion_matrix": [
+      [
+        1639,
+        54
+      ],
+      [
+        7,
+        965
+      ]
+    ]
+  },
+  "performance": {
+    "dataset": "Employee Performance",
+    "samples": 7000,
+    "features": 14,
+    "classes": [
+      "High",
+      "Low",
+      "Medium"
+    ],
+    "best_model": "Gradient Boost",
+    "cv_results": {
+      "Random Forest": {
+        "test_accuracy": 0.9135714285714286,
+        "cv_mean": 0.9258928571428571,
+        "cv_std": 0.008874838314135141,
+        "ci_lower": 0.914873,
+        "ci_upper": 0.936912
+      },
+      "Gradient Boost": {
+        "test_accuracy": 0.9442857142857143,
+        "cv_mean": 0.9503571428571428,
+        "cv_std": 0.00850045016815138,
+        "ci_lower": 0.939802,
+        "ci_upper": 0.960912
+      },
+      "KNN": {
+        "test_accuracy": 0.8621428571428571,
+        "cv_mean": 0.8671428571428571,
+        "cv_std": 0.00694824159226559,
+        "ci_lower": 0.858515,
+        "ci_upper": 0.87577
+      }
+    },
+    "metrics": {
+      "accuracy": 0.9442857142857143,
+      "precision": 0.9424031404144002,
+      "recall": 0.9442857142857143,
+      "f1_score": 0.9431317911622443
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        8
+      ],
+      [
+        0,
+        480,
+        42
+      ],
+      [
+        5,
+        23,
+        842
+      ]
+    ]
+  }
+}
