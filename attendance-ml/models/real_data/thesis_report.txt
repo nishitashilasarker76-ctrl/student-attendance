@@ -3,39 +3,50 @@ THESIS ML RESULTS - COMPLETE SUMMARY
 ======================================================================
 
 OVERALL PERFORMANCE:
-  Average Accuracy: 0.9586 (95.86%)
+  Average Accuracy: 0.9287 (92.87%)
 
 INDIVIDUAL TASKS:
 
 ACTIVITY:
   Dataset: UCI HAR
   Samples: 10299
-  Best Model: Logistic Reg
+  Best Model: Logistic Regression
   Test Accuracy: 0.9545 (95.45%)
   Precision: 0.9563
   Recall: 0.9545
   F1-Score: 0.9544
-  CV Mean: 0.9350
-  CV Std: 0.0245
+  CV Mean: 0.9395
+  CV Std: 0.0150
 
 OCCUPANCY:
   Dataset: UCI Occupancy
   Samples: 10808
-  Best Model: Logistic Reg
-  Test Accuracy: 0.9771 (97.71%)
-  Precision: 0.9780
-  Recall: 0.9771
-  F1-Score: 0.9772
-  CV Mean: 0.9822
-  CV Std: 0.0163
+  Best Model: Logistic Regression
+  Test Accuracy: 0.9786 (97.86%)
+  Precision: 0.9796
+  Recall: 0.9786
+  F1-Score: 0.9787
+  CV Mean: 0.9851
+  CV Std: 0.0118
 
-PERFORMANCE:
-  Dataset: Employee Performance
-  Samples: 7000
-  Best Model: Gradient Boost
-  Test Accuracy: 0.9443 (94.43%)
-  Precision: 0.9424
-  Recall: 0.9443
-  F1-Score: 0.9431
-  CV Mean: 0.9504
-  CV Std: 0.0085
+PRODUCTIVITY:
+  Dataset: Garment Workers Productivity (UCI)
+  Samples: 1197
+  Best Model: XGBoost
+  Test Accuracy: 0.7917 (79.17%)
+  Precision: 0.7994
+  Recall: 0.7917
+  F1-Score: 0.7939
+  CV Mean: 0.8083
+  CV Std: 0.0485
+
+ATTRITION:
+  Dataset: HR Analytics (Attrition)
+  Samples: 14999
+  Best Model: Random Forest
+  Test Accuracy: 0.9900 (99.00%)
+  Precision: 0.9900
+  Recall: 0.9900
+  F1-Score: 0.9900
+  CV Mean: 0.9862
+  CV Std: 0.0048
