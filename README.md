@@ -98,36 +98,33 @@ attendance-ml/
 
 Trained on **real public benchmark datasets** from Kaggle / UCI ML Repository:
 
-### Activity Recognition (UCI HAR Dataset — 10,299 samples)
+### Employee Activity Recognition (UCI HAR Dataset — 10,299 samples)
 
 | Algorithm | Accuracy | F1-Score |
 |-----------|----------|----------|
 | Logistic Regression | **95.45%** | 0.9544 |
-| SVM (RBF) | 95.42% | 0.9540 |
 | Random Forest | 92.67% | 0.9266 |
-| Gradient Boosting | 92.03% | 0.9201 |
 | KNN (k=7) | 88.87% | 0.8877 |
 
-### Occupancy Detection (UCI Occupancy Dataset — 10,808 samples)
+### Office Occupancy Detection (UCI Occupancy Dataset — 10,808 samples)
 
 | Algorithm | Accuracy |
 |-----------|----------|
 | Logistic Regression | **97.71%** |
 | Random Forest | 95.35% |
-| Gradient Boosting | 94.37% |
 | KNN | 91.97% |
-| SVM | 90.54% |
 | Isolation Forest | 84.20% |
 
-### Student Behaviour Classification (xAPI-Edu-Data — 480 samples)
+### Employee Performance Classification (Employee Activity & Evaluation — 7,000 samples)
 
-| Algorithm | Accuracy |
-|-----------|----------|
-| SVM | **64.58%** |
-| Gradient Boosting | 61.46% |
-| Decision Tree | 61.46% |
-| Random Forest | 59.38% |
-| KNN | 58.33% |
+> ⚠️ **Class-imbalance note:** the `High` class contains only ~43 samples (0.6%). Model 3 uses `class_weight='balanced'` and `compute_sample_weight` to prevent the classifier from collapsing to the majority class. Macro-F1 is reported alongside accuracy.
+
+| Algorithm | Accuracy | Macro-F1 |
+|-----------|----------|----------|
+| Gradient Boosting | **94.43%** | — |
+| Random Forest | 92.50% | — |
+| KNN (distance-weighted) | 86.21% | — |
+| Decision Tree | 85.93% | — |
 
 ---
 
@@ -211,9 +208,9 @@ Database URL: https://smart-attendance-and-activity-default-rtdb.asia-southeast1
 
 | Dataset | Source | Samples | Purpose |
 |---------|--------|---------|---------|
-| UCI HAR | [Kaggle](https://www.kaggle.com/datasets/uciml/human-activity-recognition-with-smartphones) | 10,299 | Activity classification |
-| UCI Occupancy | [Kaggle](https://www.kaggle.com/datasets/robmarkcole/occupancy-detection-data-set-uci) | 10,808 | Presence detection |
-| xAPI-Edu-Data | [Kaggle](https://www.kaggle.com/datasets/aljarah/xAPI-Edu-Data) | 480 | Student behaviour |
+| UCI HAR | [Kaggle](https://www.kaggle.com/datasets/uciml/human-activity-recognition-with-smartphones) | 10,299 | Employee activity recognition |
+| UCI Occupancy | [Kaggle](https://www.kaggle.com/datasets/robmarkcole/occupancy-detection-data-set-uci) | 10,808 | Office occupancy detection |
+| Employee Activity & Evaluation | [Kaggle](https://www.kaggle.com/datasets/nailasayed/employee-activity-and-evaluation-dataset) | 7,000 | Employee performance classification |
 
 ---
 

@@ -1,9 +1,3 @@
-"""
-Generate Charts from SAVED JSON Results (NO re-training!)
-Run: py -3.12 generate_charts.py
-Super fast - 5 seconds!
-"""
-
 import os, json
 import matplotlib
 matplotlib.use('Agg')
@@ -17,16 +11,12 @@ print("  GENERATING CHARTS FROM SAVED RESULTS")
 print("  (No re-training - using JSON results)")
 print("="*50)
 
-# Load saved results
 with open("models/real_data/kaggle_results.json", 'r') as f:
     results = json.load(f)
 
 print(f"\n  Loaded results for: {list(results.keys())}")
 
 
-# ================================================================
-#  CHART 1: Accuracy Comparison Bar Chart (All 3 Tasks)
-# ================================================================
 print("\n[1/4] Chart 1: Accuracy Comparison Bar Chart...")
 
 fig, axes = plt.subplots(1, 3, figsize=(18, 6))
@@ -40,14 +30,14 @@ tasks = [
 for idx, (key, title, color, ylim) in enumerate(tasks):
     if key not in results:
         continue
-    
+
     data = results[key]
     names = list(data['scores'].keys())
     scores = [v * 100 for v in data['scores'].values()]
     best_score = data['best_accuracy'] * 100
-    
+
     colors = ['#2ecc71' if s == max(scores) else color for s in scores]
-    
+
     bars = axes[idx].bar(range(len(names)), scores, color=colors, edgecolor='black', linewidth=0.5)
     axes[idx].set_xticks(range(len(names)))
     axes[idx].set_xticklabels(names, rotation=45, ha='right', fontsize=9)
@@ -56,7 +46,7 @@ for idx, (key, title, color, ylim) in enumerate(tasks):
     axes[idx].set_ylim(ylim)
     axes[idx].axhline(y=best_score, color='red', linestyle='--', alpha=0.5, label=f'Best: {best_score:.2f}%')
     axes[idx].legend(fontsize=9)
-    
+
     for bar, val in zip(bars, scores):
         axes[idx].text(bar.get_x() + bar.get_width()/2., bar.get_height() + 0.3,
                     f'{val:.1f}%', ha='center', va='bottom', fontsize=9, fontweight='bold')
@@ -67,9 +57,6 @@ plt.close()
 print("  SAVED: charts/chart1_accuracy_comparison.png")
 
 
-# ================================================================
-#  CHART 2: Best Model Comparison Across Tasks
-# ================================================================
 print("[2/4] Chart 2: Best Model Summary...")
 
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -85,7 +72,7 @@ for key in ['activity_recognition', 'occupancy_detection', 'student_behaviour']:
         task_labels.append(label)
         best_accs.append(d['best_accuracy'] * 100)
 
-bars = ax.barh(range(len(task_labels)), best_accs, color=bar_colors[:len(task_labels)], 
+bars = ax.barh(range(len(task_labels)), best_accs, color=bar_colors[:len(task_labels)],
                edgecolor='black', linewidth=0.5, height=0.5)
 ax.set_yticks(range(len(task_labels)))
 ax.set_yticklabels(task_labels, fontsize=11)
@@ -106,9 +93,6 @@ plt.close()
 print("  SAVED: charts/chart2_best_models_summary.png")
 
 
-# ================================================================
-#  CHART 3: All Models Heatmap
-# ================================================================
 print("[3/4] Chart 3: All Models Heatmap...")
 
 fig, ax = plt.subplots(figsize=(12, 5))
@@ -155,14 +139,10 @@ plt.close()
 print("  SAVED: charts/chart3_heatmap_all_models.png")
 
 
-# ================================================================
-#  CHART 4: Dataset Info Summary
-# ================================================================
 print("[4/4] Chart 4: Dataset Summary...")
 
 fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-# Dataset sizes
 datasets = ['UCI HAR\n(Activity)', 'UCI Occupancy\n(PIR Sensor)', 'xAPI-Edu\n(Behaviour)']
 sizes = []
 for key in ['activity_recognition', 'occupancy_detection', 'student_behaviour']:
@@ -180,7 +160,6 @@ for bar, val in zip(bars, sizes):
     axes[0].text(bar.get_x() + bar.get_width()/2., bar.get_height() + 50,
                 f'{val:,}', ha='center', va='bottom', fontsize=12, fontweight='bold')
 
-# Best accuracy per task
 task_short = ['Activity\nRecognition', 'Occupancy\nDetection', 'Student\nBehaviour']
 best_vals = [results[k]['best_accuracy'] * 100 for k in ['activity_recognition', 'occupancy_detection', 'student_behaviour'] if k in results]
 bar_colors = ['#3498db', '#2ecc71', '#e74c3c']
@@ -199,7 +178,6 @@ plt.close()
 print("  SAVED: charts/chart4_dataset_summary.png")
 
 
-# ================================================================
 print("\n" + "="*50)
 print("  ALL CHARTS DONE! (from JSON - no re-training)")
 print("="*50)

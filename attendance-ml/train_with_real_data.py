@@ -1,457 +1,582 @@
-"""
-TRAIN WITH REAL KAGGLE DATA - Final Thesis Models
-Auto-deletes old results before saving new ones!
-Run:  py -3.12 train_with_real_data.py
-"""
-
-import os, json, shutil, warnings
-warnings.filterwarnings('ignore')
-
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.metrics import classification_report, accuracy_score, confusion_matrix, f1_score
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, IsolationForest
-from sklearn.svm import SVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-
-
-def header(title):
-    print(f"\n{'='*70}")
-    print(f"  {title}")
-    print(f"{'='*70}")
-
-
-# ===== AUTO-CLEAN OLD RESULTS =====
-header("CLEANING OLD RESULTS")
-
-if os.path.exists("models/real_data"):
-    shutil.rmtree("models/real_data")
-    print("  Deleted: models/real_data/ (old JSON)")
-
-if os.path.exists("charts"):
-    shutil.rmtree("charts")
-    print("  Deleted: charts/ (old images)")
-
-os.makedirs("models/real_data", exist_ok=True)
-os.makedirs("charts", exist_ok=True)
-print("  Created fresh folders!")
-
-
-# ===== FILE PATHS =====
-BASE = os.path.join("data", "kaggle")
-HAR_TRAIN = os.path.join(BASE, "human-activity-recognition-with-smartphones", "train.csv")
-HAR_TEST  = os.path.join(BASE, "human-activity-recognition-with-smartphones", "test.csv")
-OCC_TRAIN = os.path.join(BASE, "occupancy-detection-data-set-uci", "datatraining.txt")
-OCC_TEST  = os.path.join(BASE, "occupancy-detection-data-set-uci", "datatest.txt")
-EDU_DATA  = os.path.join(BASE, "xAPI-Edu-Data", "xAPI-Edu-Data.csv")
-
-header("CHECKING FILES")
-for name, path in [("HAR train", HAR_TRAIN), ("HAR test", HAR_TEST),
-                     ("Occupancy train", OCC_TRAIN), ("Occupancy test", OCC_TEST),
-                     ("xAPI-Edu", EDU_DATA)]:
-    exists = "YES" if os.path.exists(path) else "NO"
-    print(f"  {exists} {name}: {path}")
-
-all_results = {}
-
-
-# ================================================================
-#  MODEL 1: ACTIVITY RECOGNITION - UCI HAR
-# ================================================================
-header("MODEL 1: Activity Recognition - UCI HAR (REAL!)")
-
-if os.path.exists(HAR_TRAIN):
-    har_train = pd.read_csv(HAR_TRAIN)
-    print(f"  Train: {har_train.shape[0]} rows x {har_train.shape[1]} columns")
-
-    har_test_df = None
-    if os.path.exists(HAR_TEST):
-        har_test_df = pd.read_csv(HAR_TEST)
-        print(f"  Test:  {har_test_df.shape[0]} rows")
-        print(f"  Total: {har_train.shape[0] + har_test_df.shape[0]} samples!")
-
-    label_col = 'Activity'
-    if label_col not in har_train.columns:
-        label_col = har_train.columns[-1]
-
-    print(f"\n  Label: '{label_col}'")
-    print(f"  Distribution:\n{har_train[label_col].value_counts().to_string()}")
-
-    exclude = [label_col]
-    if 'subject' in har_train.columns:
-        exclude.append('subject')
-    feature_cols = [c for c in har_train.columns if c not in exclude]
-    print(f"  Features: {len(feature_cols)}")
-
-    le_har = LabelEncoder()
-    X_train = np.nan_to_num(har_train[feature_cols].values, nan=0.0)
-    y_train = le_har.fit_transform(har_train[label_col].values)
-    class_names = list(le_har.classes_)
-
-    if har_test_df is not None:
-        X_test = np.nan_to_num(har_test_df[feature_cols].values, nan=0.0)
-        y_test = le_har.transform(har_test_df[label_col].values)
-    else:
-        X_train, X_test, y_train, y_test = train_test_split(
-            X_train, y_train, test_size=0.2, random_state=42, stratify=y_train)
-
-    scaler = StandardScaler()
-    X_train_s = scaler.fit_transform(X_train)
-    X_test_s = scaler.transform(X_test)
-
-    models = {
-        "Random Forest":      RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1),
-        "Gradient Boosting":  GradientBoostingClassifier(n_estimators=100, max_depth=5, random_state=42),
-        "SVM (RBF)":          SVC(kernel='rbf', C=10, gamma='scale', random_state=42),
-        "KNN (k=7)":          KNeighborsClassifier(n_neighbors=7, n_jobs=-1),
-        "Logistic Regression": LogisticRegression(max_iter=1000, random_state=42),
-    }
-
-    har_scores = {}
-    best_acc, best_name, best_pred = 0, "", None
-
-    for name, model in models.items():
-        print(f"\n  Training {name}...")
-        model.fit(X_train_s, y_train)
-        y_pred = model.predict(X_test_s)
-        acc = accuracy_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred, average='weighted')
-        har_scores[name] = round(acc, 4)
-        print(f"     Accuracy: {acc:.4f} ({acc:.2%}) | F1: {f1:.4f}")
-        if acc > best_acc:
-            best_acc, best_name, best_pred = acc, name, y_pred
-
-    print(f"\n  BEST: {best_name} -> {best_acc:.2%}")
-    print(f"\n  Classification Report:\n{classification_report(y_test, best_pred, target_names=class_names, zero_division=0)}")
-    cm = confusion_matrix(y_test, best_pred).tolist()
-
-    all_results['activity_recognition'] = {
-        'dataset': 'UCI HAR (Kaggle)',
-        'train_samples': len(X_train_s),
-        'test_samples': len(X_test_s),
-        'features': len(feature_cols),
-        'classes': class_names,
-        'scores': har_scores,
-        'best_model': best_name,
-        'best_accuracy': round(best_acc, 4),
-        'confusion_matrix': cm,
-    }
-
-
-# ================================================================
-#  MODEL 2: OCCUPANCY - PIR SENSOR
-# ================================================================
-header("MODEL 2: Occupancy Detection - PIR Sensor (REAL!)")
-
-if os.path.exists(OCC_TRAIN):
-    occ_train = pd.read_csv(OCC_TRAIN)
-    print(f"  Train: {occ_train.shape[0]} rows | Columns: {list(occ_train.columns)}")
-
-    occ_test_df = None
-    if os.path.exists(OCC_TEST):
-        occ_test_df = pd.read_csv(OCC_TEST)
-        print(f"  Test:  {occ_test_df.shape[0]} rows")
-
-    feature_cols = [c for c in occ_train.columns
-                    if c != 'Occupancy'
-                    and occ_train[c].dtype in ['float64','int64','float32','int32']
-                    and 'date' not in c.lower()]
-
-    X_train = np.nan_to_num(occ_train[feature_cols].values, nan=0.0)
-    y_train = occ_train['Occupancy'].astype(int).values
-
-    if occ_test_df is not None:
-        X_test = np.nan_to_num(occ_test_df[feature_cols].values, nan=0.0)
-        y_test = occ_test_df['Occupancy'].astype(int).values
-    else:
-        X_train, X_test, y_train, y_test = train_test_split(
-            X_train, y_train, test_size=0.2, random_state=42)
-
-    sc = StandardScaler()
-    X_tr_s = sc.fit_transform(X_train)
-    X_te_s = sc.transform(X_test)
-
-    occ_models = {
-        "Random Forest":      RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1),
-        "Gradient Boosting":  GradientBoostingClassifier(n_estimators=100, random_state=42),
-        "SVM":                SVC(kernel='rbf', C=10, random_state=42),
-        "Logistic Regression": LogisticRegression(max_iter=500, random_state=42),
-        "KNN":                KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
-    }
-
-    occ_scores = {}
-    best_occ_acc, best_occ_name, best_occ_pred = 0, "", None
-
-    for name, model in occ_models.items():
-        print(f"\n  Training {name}...")
-        model.fit(X_tr_s, y_train)
-        y_pred = model.predict(X_te_s)
-        acc = accuracy_score(y_test, y_pred)
-        occ_scores[name] = round(acc, 4)
-        print(f"     Accuracy: {acc:.4f} ({acc:.2%})")
-        if acc > best_occ_acc:
-            best_occ_acc, best_occ_name, best_occ_pred = acc, name, y_pred
-
-    # Isolation Forest
-    print(f"\n  Training Isolation Forest...")
-    iso = IsolationForest(n_estimators=100, contamination=0.15, random_state=42)
-    iso.fit(X_tr_s)
-    y_iso = np.array([1 if p == -1 else 0 for p in iso.predict(X_te_s)])
-    occ_scores['Isolation Forest'] = round(accuracy_score(y_test, y_iso), 4)
-    print(f"     Accuracy: {occ_scores['Isolation Forest']}")
-
-    print(f"\n  BEST: {best_occ_name} -> {best_occ_acc:.2%}")
-    print(f"\n  Classification Report:\n{classification_report(y_test, best_occ_pred, target_names=['Empty','Occupied'], zero_division=0)}")
-    cm_occ = confusion_matrix(y_test, best_occ_pred).tolist()
-
-    all_results['occupancy_detection'] = {
-        'dataset': 'UCI Occupancy (Kaggle)',
-        'train_samples': len(X_tr_s),
-        'test_samples': len(X_te_s),
-        'features': feature_cols,
-        'scores': occ_scores,
-        'best_model': best_occ_name,
-        'best_accuracy': round(best_occ_acc, 4),
-        'confusion_matrix': cm_occ,
-    }
-
-
-# ================================================================
-#  MODEL 3: STUDENT BEHAVIOUR - xAPI-Edu-Data
-# ================================================================
-header("MODEL 3: Student Behaviour - xAPI-Edu-Data (REAL!)")
-
-if os.path.exists(EDU_DATA):
-    edu_df = pd.read_csv(EDU_DATA)
-    print(f"  Loaded: {edu_df.shape[0]} rows x {edu_df.shape[1]} columns")
-
-    label_col = 'Class'
-    if label_col not in edu_df.columns:
-        label_col = edu_df.columns[-1]
-
-    print(f"  Label: '{label_col}'\n  Distribution:\n{edu_df[label_col].value_counts().to_string()}")
-
-    le_label = LabelEncoder()
-    y_all = le_label.fit_transform(edu_df[label_col].astype(str))
-    class_labels = list(le_label.classes_)
-
-    edu_encoded = edu_df.copy()
-    for col in edu_encoded.columns:
-        if col == label_col:
-            continue
-        if edu_encoded[col].dtype == 'object':
-            edu_encoded[col] = LabelEncoder().fit_transform(edu_encoded[col].astype(str))
-
-    feat_cols = [c for c in edu_encoded.columns if c != label_col]
-    for col in feat_cols:
-        edu_encoded[col] = pd.to_numeric(edu_encoded[col], errors='coerce')
-    edu_encoded = edu_encoded.fillna(0)
-
-    X = edu_encoded[feat_cols].values.astype(float)
-    X_scaled = StandardScaler().fit_transform(X)
-
-    X_tr, X_te, y_tr, y_te = train_test_split(
-        X_scaled, y_all, test_size=0.2, random_state=42, stratify=y_all)
-
-    edu_models = {
-        "Random Forest":     RandomForestClassifier(n_estimators=200, random_state=42, n_jobs=-1),
-        "Gradient Boosting": GradientBoostingClassifier(n_estimators=150, max_depth=4, random_state=42),
-        "SVM":               SVC(kernel='rbf', C=10, gamma='scale', random_state=42),
-        "KNN":               KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
-        "Decision Tree":     DecisionTreeClassifier(max_depth=8, random_state=42),
-    }
-
-    edu_scores = {}
-    best_edu_acc, best_edu_name, best_edu_pred = 0, "", None
-
-    for name, model in edu_models.items():
-        print(f"\n  Training {name}...")
-        model.fit(X_tr, y_tr)
-        y_pred = model.predict(X_te)
-        acc = accuracy_score(y_te, y_pred)
-        edu_scores[name] = round(acc, 4)
-        print(f"     Accuracy: {acc:.4f} ({acc:.2%})")
-        if acc > best_edu_acc:
-            best_edu_acc, best_edu_name, best_edu_pred = acc, name, y_pred
-
-    print(f"\n  BEST: {best_edu_name} -> {best_edu_acc:.2%}")
-    print(f"\n  Classification Report:\n{classification_report(y_te, best_edu_pred, target_names=[str(c) for c in class_labels], zero_division=0)}")
-    cm_edu = confusion_matrix(y_te, best_edu_pred).tolist()
-
-    all_results['student_behaviour'] = {
-        'dataset': 'xAPI-Edu-Data (Kaggle)',
-        'samples': len(edu_df),
-        'features': len(feat_cols),
-        'classes': [str(c) for c in class_labels],
-        'scores': edu_scores,
-        'best_model': best_edu_name,
-        'best_accuracy': round(best_edu_acc, 4),
-        'confusion_matrix': cm_edu,
-    }
-
-
-# ================================================================
-#  SAVE FRESH JSON
-# ================================================================
-with open("models/real_data/kaggle_results.json", 'w') as f:
-    json.dump(all_results, f, indent=2, default=str)
-print(f"\n  NEW results saved -> models/real_data/kaggle_results.json")
-
-
-# ================================================================
-#  AUTO-GENERATE CHARTS (from fresh JSON)
-# ================================================================
-header("AUTO-GENERATING CHARTS")
-
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
-
-# --- CHART 1: Bar Chart ---
-print("  [1/4] Accuracy Comparison Bar Charts...")
-fig, axes = plt.subplots(1, 3, figsize=(18, 6))
-
-tasks_info = [
-    ('activity_recognition', 'Activity Recognition\n(UCI HAR)', '#3498db', (80, 100)),
-    ('occupancy_detection', 'Occupancy Detection\n(PIR Sensor)', '#e74c3c', (80, 100)),
-    ('student_behaviour', 'Student Behaviour\n(xAPI-Edu)', '#9b59b6', (40, 80)),
-]
-
-for idx, (key, title, color, ylim) in enumerate(tasks_info):
-    if key not in all_results:
-        continue
-    data = all_results[key]
-    names = list(data['scores'].keys())
-    scores = [v * 100 for v in data['scores'].values()]
-    best_s = data['best_accuracy'] * 100
-
-    colors = ['#2ecc71' if s == max(scores) else color for s in scores]
-    bars = axes[idx].bar(range(len(names)), scores, color=colors, edgecolor='black', linewidth=0.5)
-    axes[idx].set_xticks(range(len(names)))
-    axes[idx].set_xticklabels(names, rotation=45, ha='right', fontsize=8)
-    axes[idx].set_title(title, fontsize=13, fontweight='bold')
-    axes[idx].set_ylabel('Accuracy (%)')
-    axes[idx].set_ylim(ylim)
-    axes[idx].axhline(y=best_s, color='red', linestyle='--', alpha=0.5, label=f'Best: {best_s:.1f}%')
-    axes[idx].legend(fontsize=9)
-    for bar, val in zip(bars, scores):
-        axes[idx].text(bar.get_x()+bar.get_width()/2., bar.get_height()+0.3,
-                      f'{val:.1f}%', ha='center', va='bottom', fontsize=9, fontweight='bold')
-
-plt.tight_layout()
-plt.savefig('charts/chart1_accuracy_comparison.png', dpi=300, bbox_inches='tight')
-plt.close()
-print("    SAVED: charts/chart1_accuracy_comparison.png")
-
-# --- CHART 2: Best Models Horizontal Bar ---
-print("  [2/4] Best Models Summary...")
-fig, ax = plt.subplots(figsize=(10, 5))
-labels, accs, colors = [], [], ['#3498db','#2ecc71','#e74c3c']
-for k in ['activity_recognition','occupancy_detection','student_behaviour']:
-    if k in all_results:
-        d = all_results[k]
-        labels.append(f"{d['best_model']}\n({k.replace('_',' ').title()})")
-        accs.append(d['best_accuracy']*100)
-
-bars = ax.barh(range(len(labels)), accs, color=colors[:len(labels)], edgecolor='black', height=0.5)
-ax.set_yticks(range(len(labels)))
-ax.set_yticklabels(labels, fontsize=11)
-ax.set_xlabel('Accuracy (%)')
-ax.set_title('Best Model Per Task (Real Kaggle Data)', fontsize=14, fontweight='bold')
-ax.set_xlim(0, 110)
-for bar, val in zip(bars, accs):
-    ax.text(val+0.5, bar.get_y()+bar.get_height()/2., f'{val:.2f}%', va='center', fontsize=13, fontweight='bold')
-plt.tight_layout()
-plt.savefig('charts/chart2_best_models.png', dpi=300, bbox_inches='tight')
-plt.close()
-print("    SAVED: charts/chart2_best_models.png")
-
-# --- CHART 3: Confusion Matrices ---
-print("  [3/4] Confusion Matrices...")
-cm_tasks = []
-for k in ['activity_recognition','occupancy_detection','student_behaviour']:
-    if k in all_results and 'confusion_matrix' in all_results[k]:
-        cm_tasks.append((k, all_results[k]))
-
-if len(cm_tasks) > 0:
-    fig, axes = plt.subplots(1, len(cm_tasks), figsize=(6*len(cm_tasks), 5))
-    if len(cm_tasks) == 1:
-        axes = [axes]
+# """
+# EMPLOYEE ATTENDANCE & ACTIVITY MONITORING SYSTEM
+# Train with REAL Kaggle Data — 3 Datasets (Employee focused!)
+# Auto-cleans old results + Auto-generates charts
+# Run: py -3.12 train_with_real_data.py
+# """
+
+# import os
+# import json
+# import shutil
+# import warnings
+# import time
+# warnings.filterwarnings('ignore')
+
+# START_TIME = time.time()
+
+# import numpy as np
+# import pandas as pd
+# from sklearn.model_selection import train_test_split
+# from sklearn.preprocessing import LabelEncoder, StandardScaler
+# from sklearn.metrics import (
+#     classification_report, accuracy_score, confusion_matrix, f1_score
+# )
+# from sklearn.utils.class_weight import compute_sample_weight
+# from sklearn.ensemble import (
+#     RandomForestClassifier, GradientBoostingClassifier, IsolationForest
+# )
+# from sklearn.svm import SVC
+# from sklearn.linear_model import LogisticRegression
+# from sklearn.neighbors import KNeighborsClassifier
+# from sklearn.tree import DecisionTreeClassifier
+
+# # ===== CONSTANTS =====
+# TASK_TITLES = {
+#     "employee_activity": "Employee Activity\nRecognition",
+#     "office_occupancy": "Office Occupancy\nDetection",
+#     "employee_performance": "Employee Performance\nClassification",
+# }
+
+# TASK_COLORS = {
+#     "employee_activity": "#3498db",
+#     "office_occupancy": "#2ecc71",
+#     "employee_performance": "#e74c3c",
+# }
+
+# TASK_YLIMS = {
+#     "employee_activity": (80, 100),
+#     "office_occupancy": (80, 100),
+#     "employee_performance": (40, 100),
+# }
+
+
+# def header(t):
+#     """Print a formatted section header."""
+#     print(f"\n{'='*60}")
+#     print(f"  {t}")
+#     print(f"{'='*60}")
+
+
+# def train_and_score(models_dict, Xtr, ytr, Xte, yte, sample_weights=None):
+#     """
+#     Train multiple models and return best model name, best accuracy, predictions, and scores dict.
     
-    cmaps = ['Blues', 'Greens', 'Purples']
-    for idx, (key, data) in enumerate(cm_tasks):
-        cm = np.array(data['confusion_matrix'])
-        classes = data.get('classes', [str(i) for i in range(cm.shape[0])])
-        best = data['best_model']
-        acc = data['best_accuracy']*100
-
-        im = axes[idx].imshow(cm, cmap=cmaps[idx], interpolation='nearest')
-        axes[idx].set_title(f"{key.replace('_',' ').title()}\n({best}, {acc:.1f}%)", fontsize=11, fontweight='bold')
-        axes[idx].set_xticks(range(len(classes)))
-        axes[idx].set_yticks(range(len(classes)))
+#     Args:
+#         models_dict: Dict of {name: sklearn_model}
+#         Xtr, ytr: Training data
+#         Xte, yte: Test data
+#         sample_weights: Optional sample weights for training
         
-        short_classes = [c[:8] for c in classes]
-        axes[idx].set_xticklabels(short_classes, rotation=45, ha='right', fontsize=8)
-        axes[idx].set_yticklabels(short_classes, fontsize=8)
-        axes[idx].set_ylabel('Actual')
-        axes[idx].set_xlabel('Predicted')
-
-        thresh = cm.max() / 2.
-        for i in range(cm.shape[0]):
-            for j in range(cm.shape[1]):
-                axes[idx].text(j, i, str(cm[i,j]), ha='center', va='center',
-                             fontsize=10, fontweight='bold',
-                             color='white' if cm[i,j] > thresh else 'black')
-
-    plt.tight_layout()
-    plt.savefig('charts/chart3_confusion_matrices.png', dpi=300, bbox_inches='tight')
-    plt.close()
-    print("    SAVED: charts/chart3_confusion_matrices.png")
-
-# --- CHART 4: Heatmap ---
-print("  [4/4] Heatmap All Models...")
-all_model_names = sorted(set(m for r in all_results.values() for m in r['scores']))
-task_names = [k.replace('_',' ').title() for k in all_results]
-matrix = []
-for k in all_results:
-    row = [all_results[k]['scores'].get(m, 0)*100 for m in all_model_names]
-    matrix.append(row)
-
-fig, ax = plt.subplots(figsize=(12, 4))
-arr = np.array(matrix)
-im = ax.imshow(arr, cmap='RdYlGn', aspect='auto', vmin=40, vmax=100)
-ax.set_xticks(range(len(all_model_names)))
-ax.set_xticklabels(all_model_names, rotation=45, ha='right', fontsize=9)
-ax.set_yticks(range(len(task_names)))
-ax.set_yticklabels(task_names, fontsize=11)
-ax.set_title('All Models x All Tasks — Accuracy Heatmap', fontsize=14, fontweight='bold')
-for i in range(arr.shape[0]):
-    for j in range(arr.shape[1]):
-        if arr[i,j] > 0:
-            ax.text(j, i, f'{arr[i,j]:.1f}%', ha='center', va='center',
-                   fontsize=10, fontweight='bold', color='white' if arr[i,j]>70 else 'black')
-fig.colorbar(im, ax=ax, label='Accuracy (%)')
-plt.tight_layout()
-plt.savefig('charts/chart4_heatmap.png', dpi=300, bbox_inches='tight')
-plt.close()
-print("    SAVED: charts/chart4_heatmap.png")
+#     Returns:
+#         (best_model_name, best_accuracy, best_predictions, scores_dict)
+#     """
+#     scores = {}
+#     best_acc = 0
+#     best_name = ""
+#     best_pred = None
+    
+#     for name, model in models_dict.items():
+#         print(f"  Training {name}...", end="", flush=True)
+        
+#         if sample_weights is not None:
+#             model.fit(Xtr, ytr, sample_weight=sample_weights)
+#         else:
+#             model.fit(Xtr, ytr)
+        
+#         yp = model.predict(Xte)
+#         acc = accuracy_score(yte, yp)
+#         scores[name] = round(acc, 4)
+        
+#         print(f" {acc:.2%}")
+        
+#         if acc > best_acc:
+#             best_acc = acc
+#             best_name = name
+#             best_pred = yp
+    
+#     return best_name, best_acc, best_pred, scores
 
 
-# ================================================================
-header("ALL DONE!")
-print("""
-  Old results DELETED + New results SAVED!
+# def train_isolation_forest(Xtr, Xte, yte, contamination=0.15):
+#     """
+#     Train Isolation Forest and return accuracy and predictions.
+    
+#     Args:
+#         Xtr, Xte: Training and test features
+#         yte: Test labels
+#         contamination: Contamination parameter
+        
+#     Returns:
+#         (accuracy, predictions)
+#     """
+#     print(f"  Training Isolation Forest...", end="", flush=True)
+#     iso = IsolationForest(
+#         n_estimators=100, 
+#         contamination=contamination, 
+#         random_state=42
+#     )
+#     iso.fit(Xtr)
+#     yi = np.array([1 if p == -1 else 0 for p in iso.predict(Xte)])
+#     acc = accuracy_score(yte, yi)
+#     print(f" {acc:.2%}")
+#     return acc, yi
 
-  JSON:   models/real_data/kaggle_results.json
-  
-  Charts: charts/chart1_accuracy_comparison.png
-          charts/chart2_best_models.png
-          charts/chart3_confusion_matrices.png
-          charts/chart4_heatmap.png
+# # ===== AUTO-CLEAN =====
+# header("CLEANING OLD RESULTS")
+# for d in ["models/real_data","charts"]:
+#     if os.path.exists(d): shutil.rmtree(d)
+#     os.makedirs(d,exist_ok=True)
+# print("  Fresh folders created!")
 
-  -> Open charts/ folder -> Insert into Word/Paper!
-""")
+# # ===== PATHS =====
+# B = os.path.join("data","kaggle")
+# HAR_TR = os.path.join(B,"human-activity-recognition-with-smartphones","train.csv")
+# HAR_TE = os.path.join(B,"human-activity-recognition-with-smartphones","test.csv")
+# OCC_TR = os.path.join(B,"occupancy-detection-data-set-uci","datatraining.txt")
+# OCC_TE = os.path.join(B,"occupancy-detection-data-set-uci","datatest.txt")
+
+# # Employee dataset - search for it
+# EMP_DATA = None
+# for root,dirs,files in os.walk(B):
+#     for f in files:
+#         if 'employee' in f.lower() and f.endswith('.csv'):
+#             EMP_DATA = os.path.join(root,f)
+#             break
+
+# header("CHECKING FILES")
+# for n,p in [("HAR train",HAR_TR),("HAR test",HAR_TE),("Occupancy",OCC_TR),("Employee",EMP_DATA or "NOT FOUND")]:
+#     e = "YES" if p and os.path.exists(p) else "NO"
+#     print(f"  {e} {n}: {p}")
+
+# R = {}
+
+# # ================================================================
+# #  MODEL 1: EMPLOYEE ACTIVITY RECOGNITION — UCI HAR
+# # ================================================================
+# header("MODEL 1: Employee Activity Recognition (UCI HAR)")
+
+# if os.path.exists(HAR_TR):
+#     t1=time.time()
+#     tr=pd.read_csv(HAR_TR); te=pd.read_csv(HAR_TE)
+#     print(f"  Train:{tr.shape[0]} Test:{te.shape[0]} Total:{tr.shape[0]+te.shape[0]}")
+
+#     lc='Activity'
+#     if lc not in tr.columns: lc=tr.columns[-1]
+#     print(f"  Label:'{lc}' Classes:{tr[lc].nunique()}")
+
+#     ex=[lc]
+#     if 'subject' in tr.columns: ex.append('subject')
+#     fc=[c for c in tr.columns if c not in ex]
+
+#     le=LabelEncoder()
+#     Xtr=np.nan_to_num(tr[fc].values); ytr=le.fit_transform(tr[lc])
+#     Xte=np.nan_to_num(te[fc].values); yte=le.transform(te[lc])
+#     cn=list(le.classes_)
+
+#     sc = StandardScaler()
+#     Xtr = sc.fit_transform(Xtr)
+#     Xte = sc.transform(Xte)
+
+#     models = {
+#         "Random Forest": RandomForestClassifier(
+#             n_estimators=100, random_state=42, n_jobs=-1
+#         ),
+#         "Logistic Reg": LogisticRegression(max_iter=1000, random_state=42),
+#         "KNN (k=7)": KNeighborsClassifier(n_neighbors=7, n_jobs=-1),
+#     }
+
+#     best_name, best_acc, best_pred, scores = train_and_score(
+#         models, Xtr, ytr, Xte, yte
+#     )
+
+#     print(f"\n  BEST: {best_name} -> {best_acc:.2%}")
+#     print(classification_report(yte, best_pred, target_names=cn, zero_division=0))
+#     cm = confusion_matrix(yte, best_pred).tolist()
+
+#     R['employee_activity'] = {
+#         'dataset': 'UCI HAR (Kaggle)',
+#         'samples': tr.shape[0] + te.shape[0],
+#         'features': len(fc),
+#         'classes': cn,
+#         'scores': scores,
+#         'best_model': best_name,
+#         'best_accuracy': round(best_acc, 4),
+#         'confusion_matrix': cm
+#     }
+#     print(f"  Time: {time.time()-t1:.1f}s")
+
+# # ================================================================
+# #  MODEL 2: OFFICE OCCUPANCY DETECTION — PIR SENSOR
+# # ================================================================
+# header("MODEL 2: Office Occupancy Detection (PIR Sensor)")
+
+# if os.path.exists(OCC_TR):
+#     t1=time.time()
+#     otr=pd.read_csv(OCC_TR); ote=pd.read_csv(OCC_TE)
+#     print(f"  Train:{otr.shape[0]} Test:{ote.shape[0]}")
+
+#     fc = [
+#         c for c in otr.columns
+#         if c != 'Occupancy'
+#         and otr[c].dtype in ['float64', 'int64']
+#         and 'date' not in c.lower()
+#     ]
+#     print(f"  Features: {fc}")
+
+#     Xtr = np.nan_to_num(otr[fc].values)
+#     ytr = otr['Occupancy'].astype(int).values
+#     Xte = np.nan_to_num(ote[fc].values)
+#     yte = ote['Occupancy'].astype(int).values
+
+#     s = StandardScaler()
+#     Xtr = s.fit_transform(Xtr)
+#     Xte = s.transform(Xte)
+
+#     models = {
+#         "Random Forest": RandomForestClassifier(
+#             n_estimators=100, random_state=42, n_jobs=-1
+#         ),
+#         "Logistic Reg": LogisticRegression(max_iter=500, random_state=42),
+#         "KNN": KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
+#     }
+
+#     best_name, best_acc, best_pred, scores = train_and_score(
+#         models, Xtr, ytr, Xte, yte
+#     )
+
+#     # Isolation Forest
+#     iso_acc, iso_pred = train_isolation_forest(Xtr, Xte, yte, contamination=0.15)
+#     scores['Isolation Forest'] = round(iso_acc, 4)
+    
+#     # Check if Isolation Forest is better
+#     if iso_acc > best_acc:
+#         best_acc = iso_acc
+#         best_name = 'Isolation Forest'
+#         best_pred = iso_pred
+
+#     print(f"\n  BEST: {best_name} -> {best_acc:.2%}")
+#     print(classification_report(
+#         yte, best_pred, 
+#         target_names=['Empty', 'Occupied'], 
+#         zero_division=0
+#     ))
+#     cm = confusion_matrix(yte, best_pred).tolist()
+
+#     R['office_occupancy'] = {
+#         'dataset': 'UCI Occupancy (Kaggle)',
+#         'samples': otr.shape[0] + ote.shape[0],
+#         'features': fc,
+#         'scores': scores,
+#         'best_model': best_name,
+#         'best_accuracy': round(best_acc, 4),
+#         'confusion_matrix': cm
+#     }
+#     print(f"  Time: {time.time()-t1:.1f}s")
+
+# # ================================================================
+# #  MODEL 3: EMPLOYEE PERFORMANCE — Attendance + Activity
+# # ================================================================
+# header("MODEL 3: Employee Performance & Attendance")
+
+# if EMP_DATA and os.path.exists(EMP_DATA):
+#     t1=time.time()
+#     df=pd.read_csv(EMP_DATA)
+#     print(f"  Loaded: {df.shape[0]} rows x {df.shape[1]} columns")
+#     print(f"  Columns: {list(df.columns)}")
+
+#     # Find label column
+#     label_col = None
+#     for c in df.columns:
+#         cl = c.lower()
+#         if (
+#             'performance' in cl 
+#             and ('label' in cl or 'level' in cl or 'rating' in cl or 'category' in cl)
+#         ):
+#             label_col = c
+#             break
+#     if label_col is None:
+#         for c in df.columns:
+#             if 'performance' in c.lower():
+#                 label_col = c
+#                 break
+#     if label_col is None:
+#         label_col = df.columns[-1]
+
+#     print(f"\n  Label: '{label_col}'")
+#     print(f"  Distribution:\n{df[label_col].value_counts().to_string()}")
+
+#     # Encode label
+#     le = LabelEncoder()
+#     y = le.fit_transform(df[label_col].astype(str))
+#     classes = list(le.classes_)
+#     print(f"  Classes: {classes}")
+
+#     # Encode other object columns
+#     encoded_df = df.copy()
+#     for c in encoded_df.columns:
+#         if c == label_col:
+#             continue
+#         if encoded_df[c].dtype == 'object':
+#             encoded_df[c] = LabelEncoder().fit_transform(encoded_df[c].astype(str))
+
+#     # Features
+#     feature_cols = [
+#         c for c in encoded_df.columns
+#         if c != label_col and c.lower() != 'employee_id'
+#     ]
+#     for c in feature_cols:
+#         encoded_df[c] = pd.to_numeric(encoded_df[c], errors='coerce')
+#     encoded_df = encoded_df.fillna(0)
+
+#     X = encoded_df[feature_cols].values.astype(float)
+#     X = StandardScaler().fit_transform(X)
+
+#     Xtr, Xte, ytr, yte = train_test_split(
+#         X, y, test_size=0.2, random_state=42, stratify=y
+#     )
+#     print(f"  Features:{len(feature_cols)} Train:{len(Xtr)} Test:{len(Xte)}")
+
+#     class_weight = 'balanced'
+#     sample_weight = compute_sample_weight(class_weight=class_weight, y=ytr)
+
+#     models = {
+#         "Random Forest": RandomForestClassifier(
+#             n_estimators=100, random_state=42, n_jobs=-1, 
+#             class_weight=class_weight
+#         ),
+#         "Gradient Boost": GradientBoostingClassifier(
+#             n_estimators=100, max_depth=4, random_state=42
+#         ),
+#         "KNN": KNeighborsClassifier(
+#             n_neighbors=5, n_jobs=-1, weights='distance'
+#         ),
+#         "Decision Tree": DecisionTreeClassifier(
+#             max_depth=8, random_state=42, class_weight=class_weight
+#         ),
+#     }
+
+#     scores = {}
+#     best_acc = 0
+#     best_name = ""
+#     best_pred = None
+#     best_model_obj = None
+    
+#     for name, model in models.items():
+#         print(f"  Training {name}...", end="", flush=True)
+        
+#         if name == "Gradient Boost":
+#             model.fit(Xtr, ytr, sample_weight=sample_weight)
+#         else:
+#             model.fit(Xtr, ytr)
+        
+#         yp = model.predict(Xte)
+#         acc = accuracy_score(yte, yp)
+#         f1_macro = f1_score(yte, yp, average='macro')
+#         scores[name] = round(acc, 4)
+#         print(f" {acc:.2%} (macro-F1:{f1_macro:.4f})")
+        
+#         if acc > best_acc:
+#             best_acc = acc
+#             best_name = name
+#             best_pred = yp
+#             best_model_obj = model
+
+#     print(f"\n  BEST: {best_name} -> {best_acc:.2%}")
+#     print(classification_report(
+#         yte, best_pred, 
+#         target_names=[str(c) for c in classes], 
+#         zero_division=0
+#     ))
+#     cm = confusion_matrix(yte, best_pred).tolist()
+
+#     # Feature importance
+#     if hasattr(best_model_obj, 'feature_importances_'):
+#         print("  Top 5 Features:")
+#         importances = sorted(
+#             zip(feature_cols, best_model_obj.feature_importances_),
+#             key=lambda x: -x[1]
+#         )
+#         for fname, fval in importances[:5]:
+#             print(f"    {fname:>25}: {fval:.4f} {'#' * int(fval * 40)}")
+
+#     R['employee_performance'] = {
+#         'dataset': 'Employee Activity & Evaluation (Kaggle)',
+#         'samples': len(df),
+#         'features': len(feature_cols),
+#         'classes': [str(c) for c in classes],
+#         'scores': scores,
+#         'best_model': best_name,
+#         'best_accuracy': round(best_acc, 4),
+#         'confusion_matrix': cm
+#     }
+#     print(f"  Time: {time.time()-t1:.1f}s")
+# else:
+#     print(f"  Employee dataset not found!")
+
+# # ================================================================
+# #  SAVE JSON
+# # ================================================================
+# with open("models/real_data/kaggle_results.json",'w') as f:
+#     json.dump(R,f,indent=2,default=str)
+# print(f"\n  Results saved -> models/real_data/kaggle_results.json")
+
+# # ================================================================
+# #  AUTO-GENERATE CHARTS
+# # ================================================================
+# header("GENERATING CHARTS")
+
+# import matplotlib
+# matplotlib.use('Agg')
+# import matplotlib.pyplot as plt
+
+# # CHART 1: Accuracy Bars
+# print("  [1/3] Accuracy comparison...")
+# fig, axes = plt.subplots(1, len(R), figsize=(6 * len(R), 6))
+# if len(R) == 1:
+#     axes = [axes]
+
+# for i, (task_key, task_data) in enumerate(R.items()):
+#     model_names = list(task_data['scores'].keys())
+#     accuracies = [v * 100 for v in task_data['scores'].values()]
+#     best_acc = task_data['best_accuracy'] * 100
+    
+#     color = TASK_COLORS.get(task_key, '#3498db')
+#     ylim = TASK_YLIMS.get(task_key, (40, 100))
+#     bar_colors = [
+#         '#2ecc71' if acc == max(accuracies) else color 
+#         for acc in accuracies
+#     ]
+    
+#     bars = axes[i].bar(
+#         range(len(model_names)), accuracies, color=bar_colors,
+#         edgecolor='black', linewidth=0.5
+#     )
+#     axes[i].set_xticks(range(len(model_names)))
+#     axes[i].set_xticklabels(model_names, rotation=45, ha='right', fontsize=8)
+#     axes[i].set_title(
+#         TASK_TITLES.get(task_key, task_key),
+#         fontsize=12, fontweight='bold'
+#     )
+#     axes[i].set_ylabel('Accuracy (%)')
+#     axes[i].set_ylim(ylim)
+#     axes[i].axhline(
+#         y=best_acc, color='red', linestyle='--', alpha=0.5,
+#         label=f'Best:{best_acc:.1f}%'
+#     )
+#     axes[i].legend(fontsize=8)
+    
+#     for bar, acc in zip(bars, accuracies):
+#         axes[i].text(
+#             bar.get_x() + bar.get_width() / 2., bar.get_height() + 0.3,
+#             f'{acc:.1f}%', ha='center', fontsize=9, fontweight='bold'
+#         )
+
+# plt.tight_layout()
+# plt.savefig('charts/chart1_accuracy_comparison.png', dpi=300, bbox_inches='tight')
+# plt.close()
+# print("    SAVED: charts/chart1_accuracy_comparison.png")
+
+# # CHART 2: Confusion Matrices
+# print("  [2/3] Confusion matrices...")
+# cm_list = [(k, d) for k, d in R.items() if 'confusion_matrix' in d]
+# if cm_list:
+#     fig, axes = plt.subplots(1, len(cm_list), figsize=(5 * len(cm_list), 4.5))
+#     if len(cm_list) == 1:
+#         axes = [axes]
+#     cmaps = ['Blues', 'Greens', 'Reds']
+    
+#     for i, (task_key, task_data) in enumerate(cm_list):
+#         cm = np.array(task_data['confusion_matrix'])
+#         classes = task_data.get('classes', [str(j) for j in range(cm.shape[0])])
+        
+#         axes[i].imshow(cm, cmap=cmaps[i % 3], interpolation='nearest')
+#         axes[i].set_title(
+#             f"{TASK_TITLES.get(task_key, task_key)}\n"
+#             f"({task_data['best_model']}, {task_data['best_accuracy']*100:.1f}%)",
+#             fontsize=9, fontweight='bold'
+#         )
+        
+#         class_labels = [c[:10] for c in classes]
+#         axes[i].set_xticks(range(len(class_labels)))
+#         axes[i].set_xticklabels(class_labels, rotation=45, ha='right', fontsize=7)
+#         axes[i].set_yticks(range(len(class_labels)))
+#         axes[i].set_yticklabels(class_labels, fontsize=7)
+#         axes[i].set_ylabel('Actual')
+#         axes[i].set_xlabel('Predicted')
+        
+#         threshold = cm.max() / 2.
+#         for row in range(cm.shape[0]):
+#             for col in range(cm.shape[1]):
+#                 text_color = 'white' if cm[row, col] > threshold else 'black'
+#                 axes[i].text(
+#                     col, row, str(cm[row, col]),
+#                     ha='center', va='center', fontsize=8,
+#                     fontweight='bold', color=text_color
+#                 )
+    
+#     plt.tight_layout()
+#     plt.savefig('charts/chart2_confusion_matrices.png', dpi=300, bbox_inches='tight')
+#     plt.close()
+#     print("    SAVED: charts/chart2_confusion_matrices.png")
+
+# # CHART 3: Summary
+# print("  [3/3] Summary chart...")
+# fig, ax = plt.subplots(figsize=(10, 5))
+# labels = []
+# accuracies = []
+# colors = ['#3498db', '#2ecc71', '#e74c3c']
+
+# for task_key in R:
+#     task_data = R[task_key]
+#     task_title = TASK_TITLES.get(task_key, task_key).replace('\n', ' ')
+#     labels.append(f"{task_data['best_model']}\n({task_title})")
+#     accuracies.append(task_data['best_accuracy'] * 100)
+
+# bars = ax.barh(
+#     range(len(labels)), accuracies, color=colors[:len(labels)],
+#     edgecolor='black', height=0.5
+# )
+# ax.set_yticks(range(len(labels)))
+# ax.set_yticklabels(labels, fontsize=10)
+# ax.set_xlabel('Accuracy (%)')
+# ax.set_title(
+#     'Best Model Per Task — Employee Monitoring System',
+#     fontsize=13, fontweight='bold'
+# )
+# ax.set_xlim(0, 110)
+
+# for bar, acc in zip(bars, accuracies):
+#     ax.text(
+#         acc + 0.5, bar.get_y() + bar.get_height() / 2.,
+#         f'{acc:.2f}%', va='center', fontsize=12, fontweight='bold'
+#     )
+
+# plt.tight_layout()
+# plt.savefig('charts/chart3_best_models.png', dpi=300, bbox_inches='tight')
+# plt.close()
+# print("    SAVED: charts/chart3_best_models.png")
+
+# # ================================================================
+# #  GRAND SUMMARY
+# # ================================================================
+# total_time = time.time() - START_TIME
+# header(f"DONE! Total time: {total_time:.0f} seconds")
+
+# print("\n  RESULTS SUMMARY:")
+# for task_key, task_data in R.items():
+#     task_title = TASK_TITLES.get(task_key, task_key).replace('\n', ' ')
+#     print(f"\n  {task_title}")
+#     print(f"    Dataset: {task_data['dataset']} ({task_data.get('samples', '?')} samples)")
+#     print(f"    BEST: {task_data['best_model']} -> {task_data['best_accuracy']:.2%}")
+#     for model_name, score in task_data['scores'].items():
+#         is_best = " <-- BEST" if model_name == task_data['best_model'] else ""
+#         print(f"      {model_name:>20}: {score:.4f} ({score:.2%}){is_best}")
+
+# print(f"""
+#   FILES:
+#     models/real_data/kaggle_results.json
+#     charts/chart1_accuracy_comparison.png
+#     charts/chart2_confusion_matrices.png
+#     charts/chart3_best_models.png
+# """)
+
